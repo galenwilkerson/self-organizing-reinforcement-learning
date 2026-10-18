@@ -1,0 +1,8 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite the paper."
+title: "Self-organizing reinforcement learning: a swarm approaches the explore–exploit optimum"
+authors:
+  - family-names: Wilkerson
+    given-names: Galen J.
+year: 2026
+url: "https://github.com/galenwilkerson/self-organizing-reinforcement-learning"

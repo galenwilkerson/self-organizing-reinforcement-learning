@@ -1,0 +1,20 @@
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.blg
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.toc
+
+# Internal working notes (not for distribution / double-blind)
+_working_notes/
+
+# Unused / legacy figures
+figures/_unused/
+
+# Large simulation data lives off-repo (regenerate via figures/gen_*.py; caches on local SSD)
+*.npz
+__pycache__/
+*.pyc
