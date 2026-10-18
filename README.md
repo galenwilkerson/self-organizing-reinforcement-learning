@@ -27,6 +27,14 @@ explore → recruit → disperse cycle settles at the **ideal-free / Nash alloca
 patch richness), which *is* the bandit's optimal allocation — reached *approximately*, and by *reaching* rather
 than *learning* (see the paper for the precise, calibrated claims).
 
+## Interactive demo
+
+A self-contained, browser-based demo — this paper's reward-free / learner-free version — is in
+[`demos/collective_foraging_demo.html`](demos/collective_foraging_demo.html). No install: just open the file
+in a browser. It runs the whole story live — Lévy exploration, recruitment cascades, blocking, and the swarm
+settling at the ideal-free allocation. (When this repository is made public it can be served directly via
+GitHub Pages.)
+
 ## Contents
 
 - `main.tex`, `refs.bib` — manuscript source (TMLR format; anonymized for double-blind review).

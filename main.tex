@@ -213,6 +213,30 @@ then releases to explore again. Crucially for what follows, \textbf{no step of t
 seed fires on \emph{contact} with resource, and recruitment responds to the \emph{active fraction} of
 neighbours---a crowd signal---never to how rich a patch is or how much intake an agent receives.
 
+\begin{table}[t]
+\centering
+{\small
+\begin{tabular}{@{}llr@{}}
+\hline
+\textbf{Symbol} & \textbf{Meaning} & \textbf{Value} \\
+\hline
+$N$ & foragers & $200$ \\
+$L$ & torus side length & $800$ \\
+$\rho_r=N(r/L)^2$ & connectivity density & $2.1$ ($r\approx82$) \\
+$\phi$ & activation threshold ($a/k\ge\phi$) & $0.18$ ($2/\phi\approx11$) \\
+$\alpha$ & L\'evy exponent & $1.0$ \\
+$C$ & patches (resource clumps) & $10$ \\
+$\beta$ & Pareto patch-richness exponent & $2.2$ \\
+$M$ & resource sources & $80$ \\
+$z_c^{\mathrm{RGG}}$ & percolation onset & ${\approx}4.51$ \\
+\hline
+\end{tabular}}
+\caption{\textbf{Main model parameters} (spatial foraging model, \S\ref{sec:mech}). The abstract congestion
+game (\S\ref{sec:compare}, App.~\ref{app:marl}) uses $K{=}10$ patches and $N{=}200$ agents with the same Pareto
+richness; the embodied comparison (App.~\ref{app:embodied}) uses $N{=}200$ over horizon $T{=}600$.}
+\label{tab:params}
+\end{table}
+
 \paragraph{The cascade cycle is an explore/exploit balancer.} The mechanism runs a drive--avalanche cycle
 (Fig.~\ref{fig:cycle}): discovery seeds a cascade (explore\,$\to$\,recruit\,$\to$\,exploit), crowding stifles
 and disperses it (exploit\,$\to$\,released\,$\to$\,explore), and the swarm self-organizes to a poised operating
