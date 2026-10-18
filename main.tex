@@ -55,11 +55,12 @@ implementation, not a claim that no payoff-equivalent information is used. The s
 allocation without \emph{learning} it: its quality plateaus and re-settles after the resources move, with no
 cumulative gain. Against a trained reinforcement-learning baseline the comparison is embodiment-dependent: in an \emph{easier,
 disembodied} version of the game a learner reaches the optimum more precisely, but in the \emph{same embodied}
-environment as the swarm---matched sensing, movement, and actions---the reward-free swarm reaches $55\%$ of a
-validated oracle ceiling at zero training, ahead of an online decentralized learner's $34\%$ (the $1.67\times$
+environment as the swarm---matched sensing, movement, and actions---the reward-free swarm reaches ${\approx}55\%$ of a
+validated oracle ceiling at zero training, ahead of an online decentralized learner's ${\approx}34\%$ (the $1.67\times$
 intake ratio), and stays ahead across a horizon$\times$nonstationarity sweep. Both stay far from the ceiling,
-and the learner is limited by its local architecture, not its training budget, so closing the gap would need a
-higher-capacity learner, not more training. We scope the claim to this one minimal setting and decentralized
+and the learner is \emph{not} budget-limited (it converges, and the gap is robust to learning rate); the
+plausible---but untested---explanation is a limit of its local architecture, so closing the gap would likely
+need a higher-capacity learner rather than more training. We scope the claim to this one minimal setting and decentralized
 learner class---it \emph{bounds} rather than settles the comparison---and read it not as beating reinforcement
 learning but as evidence the mechanism is \emph{worth pursuing}: it approaches the optimum competitively,
 without the learner's overhead. The result is a concrete demonstration that the self-organizing physics of a minimal swarm can carry
@@ -69,6 +70,17 @@ machinery. The companion paper~\citep{partI} develops the underlying mechanism.
 
 % =====================================================================
 \section{Introduction}
+
+\begin{figure}[t]\centering
+  \includegraphics[width=0.86\linewidth]{fig_mechanism_tikz.pdf}
+  \caption{\textbf{The physical model.} Agents explore by L\'evy flights (left). An agent that lands on a
+  resource---a \emph{seed}---triggers a recruitment cascade along the proximity network, drawing neighbours
+  into local convergence on the find; as the neighbourhood crowds, degree-normalized activation $a/k$ falls
+  below threshold $\phi$ and further recruitment is \emph{blocked} (red). Schematic of the model described in
+  \S\ref{sec:mech}; the full model is developed in~\citep{partI}.}
+  \label{fig:mech}
+\end{figure}
+
 Reinforcement learning (RL) is the machine-learning account of the explore/exploit trade-off: a system must
 \emph{explore} to discover where reward is and \emph{exploit} what it has found, and good behaviour is the
 behaviour that balances the two and settles at the best available payoff~\citep{SuttonBarto2018}. A foraging
@@ -130,14 +142,15 @@ games dynamics converge, and in the embodied setting forages competitively with 
 collective ``beats'' RL \emph{flips} with embodiment (\S\ref{sec:compare}), a caution for how such comparisons
 are run.
 
-\paragraph{Scope and the companion paper.} The swarm's mechanism---a spatial threshold recruitment cascade that
-self-organizes to a critical ``cascade window''---is developed in a companion paper~\citep{partI}. We summarise
-it (with figures) only as far as the present reading needs and keep the paper self-contained for a
-machine-learning reader; the companion paper is provided, anonymized, as supplementary material so a reviewer
-can check the mechanism's details directly---including the parameter sweeps (phase diagrams over connectivity
-and activation threshold) that establish the self-organized ``cascade window,'' and the movement-neutrality of
-recruitment, both of which we cite rather than re-derive here. Our claims concern the explore/exploit problem
-and the allocation the swarm reaches.
+\paragraph{Scope and the companion paper.} The swarm's mechanism---a spatial threshold recruitment cascade
+whose self-organized ``cascade window'' is analysed in full---is developed in a companion
+paper~\citep{partI}, which we cite for the complete treatment. This paper is \emph{self-contained}: every
+claim it makes is supported by evidence shown here. In particular, the self-organizing operating regime is
+demonstrated in-paper (\S\ref{sec:solve}, Fig.~\ref{fig:selforg}), the recruit-state movement property we use
+is a stated feature of the model (below), and the learner comparison matches movement by construction
+(App.~\ref{app:embodied})---so no load-bearing claim depends on the companion. We summarise the mechanism only
+as far as the present reading needs; our claims concern the explore/exploit problem and the allocation the
+swarm reaches.
 
 % =====================================================================
 \section{Related work}
@@ -200,30 +213,21 @@ then releases to explore again. Crucially for what follows, \textbf{no step of t
 seed fires on \emph{contact} with resource, and recruitment responds to the \emph{active fraction} of
 neighbours---a crowd signal---never to how rich a patch is or how much intake an agent receives.
 
-\begin{figure}[t]\centering
-  \includegraphics[width=0.86\linewidth]{fig_mechanism_tikz.pdf}
-  \caption{\textbf{The physical model.} Agents explore by L\'evy flights (left). An agent that lands on a
-  resource---a \emph{seed}---triggers a recruitment cascade along the proximity network, drawing neighbours
-  into local convergence on the find; as the neighbourhood crowds, degree-normalized activation $a/k$ falls
-  below threshold $\phi$ and further recruitment is \emph{blocked} (red). Reproduced from the companion
-  paper~\citep{partI}, where the full model is developed.}
-  \label{fig:mech}
-\end{figure}
-
 \paragraph{The cascade cycle is an explore/exploit balancer.} The mechanism runs a drive--avalanche cycle
 (Fig.~\ref{fig:cycle}): discovery seeds a cascade (explore\,$\to$\,recruit\,$\to$\,exploit), crowding stifles
 and disperses it (exploit\,$\to$\,released\,$\to$\,explore), and the swarm self-organizes to a poised operating
-point---a ``cascade window'' in connectivity---without any parameter being tuned~\citep{partI}. The companion
-paper maps this window with parameter sweeps (phase diagrams over connectivity and activation threshold): the
-window's lower edge is the percolation onset and its upper edge is the degree-dependent blocking bound, and
-the swarm self-tunes between them. The density-dependent dispersal (``blocking'') is thus what regulates the
-explore/exploit \emph{balance}---how much of the swarm explores versus exploits---across the parameter space.
-At any instant part of the swarm is exploring and part is exploiting; the cycle continually re-apportions the
-two. This is the explore/exploit trade-off being managed, in real time, by the physics rather than by a
-controller. A second
-fact from the companion paper is load-bearing for the comparisons below and is a consequence of the mechanism,
-not a tuning: recruitment is \emph{movement-neutral}---recruited agents reuse the exploring step length and
-change only direction, so no movement budget is spent to coordinate~\citep{partI}.
+point---a ``cascade window'' in connectivity---without any parameter being tuned. We show this self-tuned
+operating regime directly in this paper (\S\ref{sec:solve}, Fig.~\ref{fig:selforg}): the swarm holds a
+subcritical, near-ideal-matching operating point across a $60\times$ density range with no per-condition
+tuning. The window's lower edge is the percolation onset and its upper edge the degree-dependent blocking
+bound; the companion paper maps it in full with phase diagrams over connectivity and activation
+threshold~\citep{partI}. The density-dependent dispersal (``blocking'') is thus what regulates the
+explore/exploit \emph{balance}---how much of the swarm explores versus exploits. At any instant part of the
+swarm is exploring and part is exploiting; the cycle continually re-apportions the two---the explore/exploit
+trade-off managed, in real time, by the physics rather than by a controller. One further property of the
+model is used below: recruitment is \emph{movement-neutral}---by definition of the recruit state, recruited
+agents reuse the exploring step length and change only direction, so no movement budget is spent to
+coordinate (a stated feature of the model here; analysed in~\citep{partI}).
 
 \begin{figure}[t]\centering
   \includegraphics[width=0.62\linewidth]{fig_cycle_schematic_tikz.pdf}
@@ -231,7 +235,8 @@ change only direction, so no movement budget is spent to coordinate~\citep{partI
   network/spatial density (horizontal) and node activity (vertical), the swarm runs a drive--avalanche cycle:
   discovery seeds a recruitment cascade (explore$\to$recruit$\to$exploit); crowding blocks and disperses it
   (exploit$\to$released$\to$explore); aggregation (\emph{drive}) versus dispersal (\emph{dissipation}) hold the
-  swarm in a poised window, with no parameter tuned. Reproduced from the companion paper~\citep{partI}.}
+  swarm in a poised window, with no parameter tuned. Schematic of the self-organizing cycle described in
+  \S\ref{sec:mech}; full treatment in~\citep{partI}.}
   \label{fig:cycle}
 \end{figure}
 
@@ -410,8 +415,9 @@ swarm must do; the next experiment shows that advantage does not survive matchin
 environment the comparison flips (Fig.~\ref{fig:embodied}). To make the comparison independent of how strong
 the learner is, we normalise by a \emph{validated oracle ceiling}: the maximum total intake achievable under
 free placement given the current resource state, a strict upper bound (no realised run approaches it). The
-reward-free swarm reaches $55\%$ of the ceiling at \emph{zero} training versus the online learner's $34\%$
-(equivalently $1.67\times$ the cumulative intake, $65{,}700$ vs $39{,}300$); it also matches the ideal-free
+reward-free swarm reaches ${\approx}55\%$ of the ceiling at \emph{zero} training versus the online learner's
+${\approx}34\%$ (ceiling fractions rounded; the raw cumulative-intake ratio is $1.67\times$, $65{,}700$ vs
+$39{,}300$); it also matches the ideal-free
 allocation better (slope $0.78$ vs $0.22$) and is far less exploitable (Nash-gap $0.36$ vs $1.34$---the
 exploitability ranking \emph{reverses} from the abstract game). (The swarm's own matching is
 configuration-specific: slope $0.78$ in this minimal shared environment vs.\ $0.94$ in the richer spatial field
@@ -419,8 +425,9 @@ of \S\ref{sec:solve}, so the $0.94$ headline is not universal.) The lead is \emp
 sweep of horizon $T$ and resource-relocation interval (nonstationarity), the swarm leads in \emph{every} cell,
 and the margin \emph{grows} with the horizon rather than closing (Fig.~\ref{fig:crossover}). The learner is not
 a strawman---its intake converges by ${\sim}100$ steps and it re-adapts after a mid-run relocation, the gap
-robust across learning rates ($0.1$--$2.0$)---but it is \emph{architecture-limited, not budget-limited}: it
-plateaus at a policy ceiling well below the swarm, and more training does not help. We are careful what this
+robust across learning rates ($0.1$--$2.0$)---so it is \emph{not budget-limited}: it plateaus at a policy
+ceiling well below the swarm, and more training does not help. The plausible (but untested) explanation is a
+limit of its local architecture rather than its budget. We are careful what this
 does and does not show. Both embodied controllers stay well below the ceiling ($23$--$66\%$ swarm, $18$--$34\%$
 learner), so the honest reading is that the fixed mechanism is the better \emph{embodied} controller here; that
 a \emph{higher-capacity or centralised} learner---not more training---is what it would take to overtake (which
@@ -470,7 +477,8 @@ transfer point on the abstract game.)
   \caption{\textbf{The swarm's lead is robust across horizon and nonstationarity.} Fraction of the oracle
   ceiling, swarm minus learner ($\Delta$), over a sweep of horizon $T$ and resource-relocation interval (smaller
   interval $=$ more nonstationary); $B=32$ paired replicas. $\Delta>0$ in all $16$ cells---the swarm is ahead
-  everywhere---and the margin \emph{grows} with $T$ (the learner does not amortise; it is architecture-limited)
+  everywhere---and the margin \emph{grows} with $T$ (the learner does not amortise---not budget-limited;
+  plausibly an architecture limit, untested)
   and with stationarity. The embodied point of Fig.~\ref{fig:embodied} ($T=600$, stationary) is one cell. Both
   controllers stay well below the ceiling (swarm $23$--$66\%$, learner $18$--$34\%$), so this shows the swarm is
   the better \emph{embodied} controller in this learner class, not that either is near-optimal.}
@@ -488,7 +496,7 @@ Reward signal & none (reward-free, Fig.~\ref{fig:rewardfree}) & per-agent scalar
 Stored parameters & none & $K$ policy values per agent \\
 Training before use & none; acts at its operating point & ${\sim}10^3$ update steps \\
 Communication & local recruitment only (within range) & none, but needs a reward oracle \\
-Movement to coordinate & none beyond exploration (movement-neutral~\citep{partI}) & not embodied (abstract game) \\
+Movement to coordinate & none beyond exploration (recruits reuse the exploring step) & not embodied (abstract game) \\
 Precision, \emph{abstract} game & right shape (slope $0.95$), but exploitable (Nash-gap $0.58$) & near-exact (Nash-gap ${\approx}0$) \\
 Exploitability, \emph{embodied} (matched) & \emph{lower}: Nash-gap $0.36$ & higher: Nash-gap $1.34$ \\
 Oracle-ceiling fraction, \emph{embodied} (0 training) & $55\%$ of ceiling ($1.67\times$ intake; Fig.~\ref{fig:embodied}) & $34\%$ (after training) \\
@@ -500,7 +508,7 @@ reward signal, no parameters, and no training; the trained learner spends a rewa
 training to buy precision (disembodied) and transfer. The abstract-game learners are disembodied; the fair,
 embodied contest (Fig.~\ref{fig:embodied}) is the one where the swarm leads ($1.67\times$ intake), at none of
 the learner's overhead. The two Nash-gap rows are different games (abstract vs.\ embodied) and not directly
-comparable; the ``movement to coordinate'' row is a companion-paper (supplementary) result, not shown here.}
+comparable.}
 \label{tab:cost}
 \end{table}
 
@@ -530,9 +538,9 @@ learner---and we are explicit about that boundary.
 (\S\ref{sec:compare}). That structure, however---sparse, patchily clustered resources (heavy-tailed in size and
 spacing) shared among foragers---is the common case in natural foraging environments, not a special one, so the
 domain the mechanism is matched to is broad and ecologically typical rather than contrived. (ii) Two forces set the allocation, and we separate them. The density-dependent dispersal
-(``blocking'') regulates the explore/exploit \emph{balance} and the critical operating point---the companion
-paper's parameter sweeps show it bounds the cascade window across connectivity and activation
-threshold~\citep{partI}, so the self-organization is load-bearing for the balancing. The allocation
+(``blocking'') regulates the explore/exploit \emph{balance} and the critical operating point---shown here by
+the self-tuned subcritical regime across a $60\times$ density range (Fig.~\ref{fig:selforg}), and mapped in
+full across connectivity and threshold in the companion paper~\citep{partI}. The allocation
 \emph{shape} (slope-one matching), by contrast, is set by richness-proportional discovery and recruitment, not
 by the crowding cutoff: a single-operating-point ablation here finds the matching slope essentially unchanged
 when the cutoff is removed ($0.94\to0.92$; App.~\ref{app:dynamics}), a consistency check alongside Part I's
@@ -543,9 +551,9 @@ trained-learner comparison includes both an abstract game and an embodied, parti
 could narrow the gap. (iv) We give no closed-form regret or convergence-rate bound.
 
 \paragraph{Outlook.} The crossover sweep (\S\ref{sec:compare}, Fig.~\ref{fig:crossover}) shows the learner's gap
-does not close with horizon or nonstationarity---it is architecture-limited---so the decisive open test is a
-\emph{higher-capacity} learner (richer observations, a centralised critic): does the swarm's advantage persist
-as learner capacity grows? A convergence-rate / regret characterisation of the physical flow against standard
+does not close with horizon or nonstationarity (it is not budget-limited), pointing---though we did not test
+it---to a limit of the learner's architecture, so the decisive open test is a \emph{higher-capacity} learner
+(richer observations, a centralised critic): does the swarm's advantage persist as learner capacity grows? A convergence-rate / regret characterisation of the physical flow against standard
 bandit algorithms would also sharpen the reading.
 
 \paragraph{Why it matters.} As an engineering primitive, the mechanism delivers a close approximation of the
@@ -619,17 +627,20 @@ the fixed point'' but neither a specific reward-following law nor a specific pay
 
 \paragraph{The role of density-dependent dispersal (blocking).} We separate blocking's two possible roles:
 setting the explore/exploit \emph{balance} versus setting the allocation \emph{shape}. For the balance,
-blocking is causal, and the companion paper establishes this properly with parameter sweeps: its phase diagrams
-over connectivity and activation threshold bound the cascade window (percolation onset below, degree-dependent
-blocking above), and the swarm self-tunes between them~\citep{partI}. For the allocation shape, we run a single
+blocking is causal: we show in-paper that the swarm self-tunes to a subcritical operating regime across a
+$60\times$ density range with no per-condition tuning (\S\ref{sec:solve}, Fig.~\ref{fig:selforg}), and the
+companion paper maps the bounding cascade window in full with phase diagrams over connectivity and activation
+threshold (percolation onset below, degree-dependent blocking above)~\citep{partI}. For the allocation shape,
+we run a single
 intermediate ablation here: removing the crowding cutoff (replacing the degree-normalized rule $a/k\ge\phi$ with
 an absolute-count rule, the maximal no-cutoff limit) while leaving recruitment otherwise intact. The matching
 slope is essentially unchanged ($0.94\to0.92$, no over-aggregation), while the active fraction rises
 ($0.73\to0.85$)---so blocking was holding more of the swarm exploring (it regulates the balance) but was not
 setting the proportional allocation. That shape traces to richness-proportional discovery and recruitment
 (richer patches, with more resource sites, are seeded more often). This is a single-operating-point consistency
-check, not a sweep---the parameter-dependence of blocking is Part I's result~\citep{partI}, and the
-absolute-count toggle is an extreme limit---but together they support attributing the allocation shape to the
+check, not a sweep (the self-tuning across conditions is Fig.~\ref{fig:selforg}; the full parameter map is
+in~\citep{partI}), and the absolute-count toggle is an extreme limit---but together they support attributing
+the allocation shape to the
 recruitment--movement coupling and discovery, while the self-organization (blocking) does the
 explore/exploit balancing.
 

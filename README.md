@@ -10,6 +10,23 @@ The swarm reaches the *shape* of the optimum (not the exact equilibrium), does s
 learning, and — measured against a validated oracle ceiling in a shared embodied environment — is competitive
 with an online decentralized RL learner at none of its overhead.
 
+## The idea, in one picture
+
+![The physical model: Lévy exploration, a recruitment cascade, and blocking](figures/fig_mechanism_tikz.png)
+
+The swarm is solving a **multi-armed bandit** — a spatial, embodied one. Each resource patch is an *arm* whose
+**state must be discovered**: unlike a textbook bandit with fixed, labelled arms, here an arm's existence, its
+**location, and its size (richness) are unknown** and have to be found by searching, and its payoff *per
+forager* **drops as more foragers crowd onto it** (a congestion bandit). So the swarm must both *explore* —
+Lévy flights, to find the patches — and *exploit* — recruit neighbours to a discovery, then disperse as it
+crowds.
+
+The surprise: it reaches this bandit's optimum with **none of reinforcement learning's machinery** — no
+learner, no value function, no training, no reward signal in the loop. The self-organizing
+explore → recruit → disperse cycle settles at the **ideal-free / Nash allocation** (foragers in proportion to
+patch richness), which *is* the bandit's optimal allocation — reached *approximately*, and by *reaching* rather
+than *learning* (see the paper for the precise, calibrated claims).
+
 ## Contents
 
 - `main.tex`, `refs.bib` — manuscript source (TMLR format; anonymized for double-blind review).
