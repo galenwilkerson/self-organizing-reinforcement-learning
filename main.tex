@@ -1,3 +1,4 @@
+\pdfoutput=1  % force pdflatex on arXiv (PDF figures)
 % =====================================================================
 %  Part II (v3) --- learner-free RL paper, for TMLR. ANONYMIZED (double-blind).
 %  THESIS (reframed, 2026-10-17 after discrimination experiments + referee review):
@@ -60,19 +61,20 @@ responds to a local crowd signal---so the mechanism is reward-free \emph{by cons
 resource sharing that crowd signal is informationally tied to payoff, ``reward-free'' is a statement about the
 implementation, not a claim that no payoff-equivalent information is used. The swarm also \emph{reaches} this
 allocation without \emph{learning} it: its quality plateaus and re-settles after the resources move, with no
-cumulative gain. Against a trained reinforcement-learning baseline the comparison is embodiment-dependent: in an \emph{easier,
-disembodied} version of the game a learner reaches the optimum more precisely, but in the \emph{same embodied}
-environment as the swarm---matched sensing, movement, and actions---the reward-free swarm reaches ${\approx}55\%$ of a
-validated oracle ceiling at zero training, ahead of an online decentralized learner's ${\approx}34\%$ (the $1.67\times$
-intake ratio), and stays ahead across a horizon$\times$nonstationarity sweep. The gap is not a weak-baseline
-artifact: it is not budget-limited (the learner converges), and \emph{higher capacity does not close it}
-either---richer-observation and centralised-critic (CTDE) learners reach only ${\approx}0.38$ of the oracle
-ceiling versus the swarm's ${\approx}0.68$ in the same environment. We scope the claim to this one minimal
-setting---it \emph{bounds} rather than settles the comparison---and read it not as beating reinforcement
-learning but as evidence the mechanism is \emph{worth pursuing}: it approaches the optimum competitively,
-without the learner's overhead. The result is a concrete demonstration that the self-organizing physics of a minimal swarm can carry
-a collective close to the optimum reinforcement learning seeks, with none of reinforcement learning's
-machinery. The companion paper~\citep{partI} develops the underlying mechanism.
+cumulative gain. Against a trained reinforcement-learning baseline the comparison is two-sided. In an \emph{easier, disembodied}
+version of the game a learner reaches the optimum more precisely. In the \emph{same embodied} environment as the
+swarm---matched sensing, movement, and actions---the reward-free swarm, at zero training, reaches ${\approx}65\%$
+of a validated oracle ceiling, while properly-trained independent-PPO and centralised-critic (CTDE) learners
+converge \emph{above} it, to ${\approx}74$--$75\%$ ($16$ seeds each, every seed above the swarm mean). The
+swarm's advantage is in \emph{budget}, not asymptote: it operates at this level with no reward signal and no
+training, and leads the learners until they overtake it, which takes ${\approx}4{,}000$ of the $15{,}000$
+training environment-steps (they plateau by ${\approx}10^{4}$). (An earlier weak online baseline appeared
+to lose to the swarm outright; properly trained, it does not---we report the corrected result.) We scope this
+to one minimal setting---it \emph{bounds} rather than settles the comparison---and read it not as beating
+reinforcement learning but as a strong \emph{zero-shot, reward-free} operating point, worth pursuing where a
+reward signal or a training budget is scarce. The result is a concrete demonstration that the self-organizing
+physics of a minimal swarm can carry a collective close to the optimum reinforcement learning seeks, with none
+of reinforcement learning's machinery. The companion paper~\citep{partI} develops the underlying mechanism.
 \end{abstract}
 
 % =====================================================================
@@ -126,12 +128,13 @@ built to find.
   \item \textbf{(It reaches the allocation, it does not learn.)} Reaching this allocation is not epistemic
         learning: the configuration's informativeness rises once and plateaus, and re-settles after the
         resources move with no cumulative gain (\S\ref{sec:how}).
-  \item \textbf{(Competitive without the overhead.)} Matched for embodiment---same environment, sensing,
-        movement, and actions---the reward-free swarm is competitive with, and here ahead of ($1.67\times$ the
-        cumulative intake of), an online decentralized RL learner, at no training, reward signal, or parameters;
-        a learner's apparent advantage appears only in an easier \emph{disembodied} version of the task
-        (\S\ref{sec:compare}). It does not, however, transfer to a different reward structure---a fixed,
-        reward-blind mechanism cannot.
+  \item \textbf{(A strong zero-shot operating point.)} Matched for embodiment---same environment, sensing,
+        movement, and actions---the reward-free swarm reaches ${\approx}65\%$ of a validated oracle ceiling at
+        zero training; properly-trained PPO/CTDE learners converge modestly \emph{above} it (${\approx}74$--$75\%$)
+        but only after ${\approx}4{,}000$ environment steps of training (of $15{,}000$), so the swarm leads the
+        learner through the low-budget / cold-start regime, at no training, reward signal, or parameters
+        (\S\ref{sec:compare}). It
+        does not, however, transfer to a different reward structure---a fixed, reward-blind mechanism cannot.
 \end{enumerate}
 
 \paragraph{What is, and is not, claimed.} We claim that the \emph{optimum} of a reinforcement-learning
@@ -145,9 +148,10 @@ optimum, it does not improve an estimate from experience. Return genuinely varie
 stakes bite---only in the \emph{dynamic, embodied} setting (\S\ref{sec:compare}), where cumulative intake
 differs across policies; that is where we compare to a learner. The content is both precise and, we think,
 important: a system with \emph{none} of reinforcement learning's machinery lands exactly where learning-in-
-games dynamics converge, and in the embodied setting forages competitively with a learner---and whether a
-collective ``beats'' RL \emph{flips} with embodiment (\S\ref{sec:compare}), a caution for how such comparisons
-are run.
+games dynamics converge, and in the embodied setting is a strong zero-shot operating point---it leads a trained
+learner through the low-budget regime, though a well-trained learner converges modestly above it
+(\S\ref{sec:compare}). How the comparison comes out depends sharply on the learner's training budget, a caution
+for how such comparisons are run.
 
 \paragraph{Scope and the companion paper.} The swarm's mechanism---a spatial threshold recruitment cascade
 whose self-organized ``cascade window'' is analysed in full---is developed in a companion
@@ -303,8 +307,9 @@ particular we do \emph{not} claim the coupling implements a particular learning 
   \centering
   \includegraphics[width=\linewidth]{fig_ifd.pdf}
   \caption{\textbf{The swarm reaches the optimal allocation, and the coupling causes it.} Committed foragers per
-  patch vs.\ richness (each point one patch in one run). \textbf{(a) Recruiting.} Slope $0.94$; dashed is the
-  ideal slope $1$, the shortfall the ``undermatching'' real foragers show. \textbf{(b) Coupling off.} With
+  patch vs.\ richness, pooled over $B{=}64$ independent replica worlds ($n{=}591$ patch-replica points).
+  \textbf{(a) Recruiting.} Pooled slope $0.94$ ($R^2{=}0.67$; per-replica mean slope ${\approx}1.0$); dashed is
+  the ideal slope $1$, the small shortfall the ``undermatching'' real foragers show. \textbf{(b) Coupling off.} With
   recruitment removed, matching is destroyed (slope $0.08$): the optimal (ideal-free) allocation is caused by
   the recruitment--movement coupling.}
   \label{fig:ifd}
@@ -422,55 +427,54 @@ converged, homeostatic policy, not an agent accumulating knowledge.
 \end{figure}
 
 % =====================================================================
-\section{Comparison to a trained learner: the verdict depends on embodiment}
+\section{Comparison to a trained learner: zero-shot operating point vs.\ converged learner}
 \label{sec:compare}
-How does a learner-free mechanism compare to an actual learner? We compare in \emph{two} settings, and the
-answer flips between them. First, an \emph{abstract} (disembodied) version of the congestion game---direct
-patch choice with a per-step payoff oracle and no spatial search---with independent softmax policy-gradient and
-$Q$-learning agents (App.~\ref{app:marl}). Second, the \emph{same embodied environment} the swarm acts in: one
-spatial world with identical local sensing, movement, and action set $\{$explore, approach, stay$\}$, where the
-\emph{only} difference between arms is fixed (recruitment) versus learned (independent per-agent REINFORCE from
-local intake) control (App.~\ref{app:embodied}). The first is the comparison a reviewer naturally asks for; the
-second is the fair one.
+How does a learner-free mechanism compare to an actual learner? We compare in \emph{two} settings. First, an
+\emph{abstract} (disembodied) version of the congestion game---direct patch choice with a per-step payoff
+oracle and no spatial search---with independent softmax policy-gradient and $Q$-learning agents
+(App.~\ref{app:marl}). Second, the \emph{same embodied environment} the swarm acts in: one spatial world with
+identical local sensing, movement, and action set $\{$explore, approach, stay$\}$, where the \emph{only}
+difference between arms is fixed (recruitment) versus learned control (App.~\ref{app:embodied}).
 
 \paragraph{Disembodied, the learner wins on precision.} On the abstract game the swarm reaches the right
 allocation \emph{shape} at zero training (matching slope $0.95$---consistent with the $0.94$ in the spatial
 field, \S\ref{sec:solve}; $83\%$ of the way to Nash by $1-$ total-variation distance; Fig.~\ref{fig:marl}a) but
 is \emph{not} near-optimal on exploitability (Nash-gap $0.58$, roughly $50\times$ a converged $Q$-learner's
 $\approx0.011$ and orders of magnitude above a policy-gradient learner's $\approx5\times10^{-4}$;
-Fig.~\ref{fig:marl}b). So in this setting a trained learner looks clearly better---it buys precision the swarm
-lacks. But the abstract game hands the learner a per-step payoff oracle and removes the spatial search the
-swarm must do; the next experiment shows that advantage does not survive matching the problem.
+Fig.~\ref{fig:marl}b). So a trained learner, handed a per-step payoff oracle, buys precision the swarm
+lacks---and, as the next experiment shows, given enough budget it keeps that edge once embodied too. What the
+swarm has instead is a strong operating point at \emph{zero} budget.
 
-\paragraph{Embodied, the verdict reverses---measured against an oracle ceiling.} In the shared embodied
-environment the comparison flips (Fig.~\ref{fig:embodied}). To make the comparison independent of how strong
-the learner is, we normalise by a \emph{validated oracle ceiling}: the maximum total intake achievable under
-free placement given the current resource state, a strict upper bound (no realised run approaches it). The
-reward-free swarm reaches ${\approx}55\%$ of the ceiling at \emph{zero} training versus the online learner's
-${\approx}34\%$ (ceiling fractions rounded; the raw cumulative-intake ratio is $1.67\times$, $65{,}700$ vs
-$39{,}300$); it also matches the ideal-free
-allocation better (slope $0.78$ vs $0.22$) and is far less exploitable (Nash-gap $0.36$ vs $1.34$---the
-exploitability ranking \emph{reverses} from the abstract game). (The swarm's own matching is
-configuration-specific: slope $0.78$ in this minimal shared environment vs.\ $0.94$ in the richer spatial field
-of \S\ref{sec:solve}, so the $0.94$ headline is not universal.) The lead is \emph{robust}: across a $4\times4$
-sweep of horizon $T$ and resource-relocation interval (nonstationarity), the swarm leads in \emph{every} cell,
-and the margin \emph{grows} with the horizon rather than closing (Fig.~\ref{fig:crossover}). The learner is not
-a strawman---its intake converges by ${\sim}100$ steps and it re-adapts after a mid-run relocation, the gap
-robust across learning rates ($0.1$--$2.0$)---so it is \emph{not budget-limited}. We then tested whether
-\emph{capacity} closes the gap, with two stronger learners in the same environment: a richer-observation MLP
-policy and a centralised-critic (CTDE) learner. It does not. Capacity gives only a small, ordered gain---fraction
-of the oracle ceiling $0.32$ (simple) $\to0.37$ (richer-obs) $\to0.38$ (centralised critic)---while the
-reward-free swarm reaches $0.68$ at zero training; all three learners reliably attain only ${\sim}57\%$ of the
-swarm's level, a ${\sim}1.8\times$ gap with non-overlapping confidence intervals (Fig.~\ref{fig:stronger}). The
-only learner runs that approach the swarm are \emph{unstable}, entropy-free seeds that collapse on most seeds,
-not a reliable operating point. So the swarm's advantage is \emph{not} a weak-baseline artifact: it reflects the
-difficulty of online, decentralised spatial coordination from local reward. We remain careful about scope. Both
-controllers stay below the oracle ceiling, so this says the fixed mechanism is the better \emph{embodied}
-controller across the learner capacities we tried---not that the swarm \emph{beats} reinforcement learning in
-general (a state-of-the-art MARL pipeline is out of scope); we claim it is \emph{competitive without the
-learner's overhead} (no training, no reward signal, no parameters), worth pursuing as a low-overhead
-coordination primitive. This is one minimal shared environment, which \emph{bounds} rather than settles the
-general comparison.
+\paragraph{Embodied, the swarm is a strong zero-shot operating point.} In the shared embodied environment we
+normalise by a \emph{validated oracle ceiling}: the maximum total intake achievable under free placement given
+the current resource state, a strict upper bound (no realised run approaches it). The reward-free swarm
+reaches ${\approx}65\%$ of this ceiling at \emph{zero} training and with \emph{no reward signal}
+(Fig.~\ref{fig:stronger}), roughly $1.8\times$ a random controller (${\approx}36\%$). We then train two
+standard learners in the identical environment---independent PPO (IPPO: clipped surrogate, GAE, entropy; a
+shared actor with a per-agent local critic) and a centralised-critic CTDE learner (MAPPO: the same actor with
+a critic over privileged global state, decentralised execution)---each given a rich $14$-dimensional local
+observation and a dense shaped reward, with evaluation always on the \emph{true} intake fraction of the
+ceiling. The swarm stays reward-free; the learner is advantaged on \emph{information}, not handicapped. Given
+adequate budget, both learners \emph{exceed} the swarm: over $16$ seeds each, IPPO reaches $0.75$ (median
+$0.73$) and MAPPO $0.74$ (median $0.72$) of the ceiling, and \emph{every one of the $32$ learner seeds finishes
+above the swarm mean} (Fig.~\ref{fig:stronger}b,c). The learning curves plateau---flat from ${\sim}8{,}000$ to
+$15{,}000$ steps---so this is converged performance, not a snapshot mid-climb.
+
+\paragraph{The advantage is in budget, not asymptote.} What separates the two---and is the point---is
+\emph{budget}, visible in the learning curves (Fig.~\ref{fig:stronger}a). The swarm sits at ${\approx}65\%$ of
+the ceiling from the first step, with no reward and no training. The learners start well below it and only
+cross the swarm after ${\approx}4{,}000$ environment steps---about a quarter of the $15{,}000$-step training
+run---plateauing by ${\approx}10^{4}$ steps. So the swarm \emph{leads} the entire low-budget / cold-start regime
+up to that crossover and still lands within ${\approx}0.10$ of the converged learners (its best seeds, $0.75$,
+reach into the learners' lower tail). An earlier version of this comparison appeared to show the swarm beating an embodied
+learner outright; that was a weak-baseline artifact---an under-trained online REINFORCE controller plateaus
+near $0.37$, barely above the random $0.36$, i.e.\ it essentially does not learn, and a properly-trained
+learner does not share that ceiling. The honest reading is narrower and, we think, more useful: the swarm's
+value is a strong \emph{zero-shot, reward-free} operating point---no reward signal, no training, no
+parameters---that is competitive in the low-budget regime, not asymptotic superiority over reinforcement
+learning. We read this not as beating reinforcement learning but as evidence the mechanism is worth pursuing
+where a reward signal or a training budget is scarce. This is one minimal shared environment, which
+\emph{bounds} rather than settles the general comparison.
 
 \paragraph{What a learner still buys: transfer.} One advantage of learning is unambiguous. In the abstract
 game's non-congestion regime (fixed per-patch reward, optimum $=$ concentrate on the richest patch) the
@@ -497,39 +501,18 @@ transfer point on the abstract game.)
 \end{figure}
 
 \begin{figure}[t]\centering
-  \includegraphics[width=\linewidth]{fig_b2_embodied.pdf}
-  \caption{\textbf{Embodied, the reward-free swarm leads the online learner.} Same spatial environment,
-  sensing, movement, and action set for both arms; the only difference is fixed (recruitment) vs.\ learned
-  (independent per-agent REINFORCE from local intake) control. \textbf{(a)} cumulative intake over the horizon
-  (bootstrap $95\%$ CI over $48$ replicas): the swarm collects $1.67\times$ the learner. \textbf{(b)} the
-  learner's intake rate converges by ${\sim}100$ steps (not under-trained). \textbf{(c)} after a mid-run
-  resource relocation both re-adapt; the swarm recovers faster. The disembodied precision advantage of
-  Fig.~\ref{fig:marl} does not survive matching the problem.}
-  \label{fig:embodied}
-\end{figure}
-
-\begin{figure}[t]\centering
-  \includegraphics[width=0.82\linewidth]{fig_crossover.pdf}
-  \caption{\textbf{The swarm's lead is robust across horizon and nonstationarity.} Fraction of the oracle
-  ceiling, swarm minus learner ($\Delta$), over a sweep of horizon $T$ and resource-relocation interval (smaller
-  interval $=$ more nonstationary); $B=32$ paired replicas. $\Delta>0$ in all $16$ cells---the swarm is ahead
-  everywhere---and the margin \emph{grows} with $T$ (the learner does not amortise; it is not budget-limited,
-  and higher capacity does not close it either---Fig.~\ref{fig:stronger})
-  and with stationarity. The embodied point of Fig.~\ref{fig:embodied} ($T=600$, stationary) is one cell. Both
-  controllers stay well below the ceiling (swarm $23$--$66\%$, learner $18$--$34\%$), so this shows the swarm is
-  the better \emph{embodied} controller in this learner class, not that either is near-optimal.}
-  \label{fig:crossover}
-\end{figure}
-
-\begin{figure}[t]\centering
-  \includegraphics[width=0.72\linewidth]{fig_stronger.pdf}
-  \caption{\textbf{The gap is not a weak-baseline artifact: higher capacity does not close it.} Fraction of the
-  oracle ceiling (last $30\%$ of a $T{=}1500$ run) for the reward-free swarm (zero training) vs.\ three learners
-  of increasing capacity in the \emph{same} embodied environment: simple tabular REINFORCE, a richer-observation
-  MLP, and a centralised-critic (CTDE) learner. Capacity gives only a small ordered gain
-  ($0.32\to0.37\to0.38$), all far below the swarm's $0.68$; bars show the stable (entropy-regularised)
-  configuration, red whiskers the entropy-free seed-to-seed instability (occasional lucky seeds spike, most
-  collapse). $B=32$ replicas (plus a 4-seed stability sweep).}
+  \includegraphics[width=\linewidth]{fig_stronger.pdf}
+  \caption{\textbf{Embodied comparison to properly-trained learners: a budget separation, not an asymptotic
+  one.} Same spatial environment and matched sensing/movement/action set for all arms; fraction of a validated
+  oracle ceiling; $16$ seeds per learner. \textbf{(a)} learning curves (median and inter-quartile band) for
+  independent PPO (IPPO) and a centralised-critic CTDE learner (MAPPO): both start below the reward-free swarm
+  (dashed, zero training) and random (dotted), cross the swarm at ${\approx}4{,}000$ environment steps
+  (of $15{,}000$ total), and plateau at $0.72$--$0.75$ by ${\approx}10^{4}$ steps
+  (flat tail $\Rightarrow$ convergence demonstrated, not assumed). \textbf{(b)} converged fractions: random
+  $0.36$, swarm $0.65$ (zero training, no reward), IPPO $0.75$, MAPPO $0.74$. \textbf{(c)} per-seed finals: all
+  $32$ learner seeds finish above the swarm mean; the swarm's best seeds ($0.75$) reach into the learners' lower
+  tail. The swarm's value is the zero-shot, reward-free operating point---it leads the low-budget regime and
+  lands within ${\approx}0.10$ of the converged learners---not asymptotic superiority.}
   \label{fig:stronger}
 \end{figure}
 
@@ -541,22 +524,21 @@ transfer point on the abstract game.)
 \textbf{To reach the optimum} & \textbf{Learner-free swarm (this work)} & \textbf{Trained multi-agent RL} \\
 \hline
 Reward signal & none (reward-free, Fig.~\ref{fig:rewardfree}) & per-agent scalar payoff, every step \\
-Stored parameters & none & $K$ policy values per agent \\
-Training before use & none; acts at its operating point & ${\sim}10^3$ update steps \\
-Communication & local recruitment only (within range) & none, but needs a reward oracle \\
-Movement to coordinate & none beyond exploration (recruits reuse the exploring step) & not embodied (abstract game) \\
+Stored parameters & none & a policy (and critic) network \\
+Training before use & none; acts at its operating point & ${\approx}4{,}000$ env-steps to match, ${\approx}10^4$ to plateau (of $15{,}000$) \\
+Communication & local recruitment only (within range) & none, but needs a reward signal every step \\
+Movement to coordinate & none beyond exploration (recruits reuse the exploring step) & learned from local observations \\
 Precision, \emph{abstract} game & right shape (slope $0.95$), but exploitable (Nash-gap $0.58$) & near-exact (Nash-gap ${\approx}0$) \\
-Exploitability, \emph{embodied} (matched) & \emph{lower}: Nash-gap $0.36$ & higher: Nash-gap $1.34$ \\
-Oracle-ceiling fraction, \emph{embodied} (0 training) & $55\%$ of ceiling ($1.67\times$ intake; Fig.~\ref{fig:embodied}) & $34\%$ (after training) \\
+Oracle-ceiling fraction, \emph{embodied} & ${\approx}65\%$ at \emph{zero} training (Fig.~\ref{fig:stronger}) & ${\approx}74$--$75\%$ converged; below the swarm until ${\approx}4{,}000$ steps \\
+Low-budget / cold-start regime & leads (zero-shot) & below the swarm until it has trained \\
 Transfer across reward structures & none (congestion/IFD only) & adapts \\
 \hline
 \end{tabular}}
 \caption{\textbf{The two pay for different things.} The learner-free swarm reaches the allocation shape with no
-reward signal, no parameters, and no training; the trained learner spends a reward signal, parameters, and
-training to buy precision (disembodied) and transfer. The abstract-game learners are disembodied; the fair,
-embodied contest (Fig.~\ref{fig:embodied}) is the one where the swarm leads ($1.67\times$ intake), at none of
-the learner's overhead. The two Nash-gap rows are different games (abstract vs.\ embodied) and not directly
-comparable.}
+reward signal, no parameters, and no training, and is competitive in the low-budget regime; the trained learner
+spends a reward signal, parameters, and training to buy precision (disembodied), a modestly higher converged
+allocation (embodied), and transfer. In the embodied environment the swarm leads at zero budget and the learner
+overtakes it only after ${\approx}4{,}000$ steps (Fig.~\ref{fig:stronger}).}
 \label{tab:cost}
 \end{table}
 
@@ -594,22 +576,27 @@ by the crowding cutoff: a single-operating-point ablation here finds the matchin
 when the cutoff is removed ($0.94\to0.92$; App.~\ref{app:dynamics}), a consistency check alongside Part I's
 swept characterisation. (iii) The
 trained-learner comparison includes both an abstract game and an embodied, partially-observed contest
-(\S\ref{sec:compare}); the embodied result held across learner capacities we tried (up to a centralised-critic
-CTDE learner, Fig.~\ref{fig:stronger}), but it is one minimal environment, so it \emph{bounds} rather than
-settles the general swarm-vs-RL question---a full state-of-the-art MARL pipeline is out of scope. (iv) We give
-no closed-form regret or convergence-rate bound.
+(\S\ref{sec:compare}); in the embodied setting the swarm is a zero-shot operating point that leads in the
+low-budget regime, while properly-trained PPO/CTDE learners converge modestly above it
+(Fig.~\ref{fig:stronger}), so the claim is a \emph{budget} separation, not asymptotic superiority. It is one
+minimal environment and two learner families, so it \emph{bounds} rather than settles the general swarm-vs-RL
+question---a full state-of-the-art MARL pipeline is out of scope. (iv) We give no closed-form regret or
+convergence-rate bound.
 
-\paragraph{Outlook.} The swarm's embodied advantage held against both horizon/nonstationarity
-(Fig.~\ref{fig:crossover}) and learner capacity up to a centralised critic (Fig.~\ref{fig:stronger}); the
-natural next steps are a full state-of-the-art MARL pipeline (deep policies, longer training, careful tuning)
-and a convergence-rate / regret characterisation of the physical flow against standard bandit algorithms.
+\paragraph{Outlook.} The embodied comparison is a budget crossover: the swarm leads from zero training and
+trained PPO/CTDE learners overtake it after ${\approx}4{,}000$ steps (Fig.~\ref{fig:stronger}). The natural
+next steps are to characterise \emph{where} that crossover sits---how it moves with environment difficulty,
+nonstationarity, agent count, and learner architecture---and to give a convergence-rate / regret
+characterisation of the physical flow against standard bandit and MARL algorithms, including whether a hybrid
+that warm-starts a learner from the swarm's zero-shot allocation shortens its budget.
 
 \paragraph{Why it matters.} As an engineering primitive, the mechanism delivers a close approximation of the
 explore/exploit optimum---a load-balanced, near-ideal-free allocation---with no model, no reward signal, no
-training, and no fitted parameters, deployable on minimal agents---and, matched for embodiment, competitive
-with (here ahead of) an online decentralized learner at none of that overhead (\S\ref{sec:compare}). It is a
-case where the optimisation \emph{is} the physics of a self-organizing collective, not an algorithm run on top
-of it.
+training, and no fitted parameters, deployable on minimal agents. Matched for embodiment it is a strong
+zero-shot operating point (${\approx}65\%$ of an oracle ceiling) that leads a trained learner through the
+low-budget / cold-start regime, before a well-trained learner---given a reward signal and a budget---converges
+modestly above it (\S\ref{sec:compare}). It is a case where the optimisation \emph{is} the physics of a
+self-organizing collective, not an algorithm run on top of it.
 
 % =====================================================================
 \section{Conclusion}
@@ -617,10 +604,11 @@ A foraging swarm faces the explore/exploit problem that defines reinforcement le
 minimal self-organizing swarm \emph{approaches its optimum}---balancing exploration and exploitation
 through its cascade cycle and converging to the \emph{shape} of the optimal allocation of foragers over patches
 (the ideal free distribution)---with no learner, no trained parameters, and no reward signal in its dynamics,
-and that it does so by \emph{reaching} this allocation rather than by \emph{learning} it. A trained learner
-reaches the optimum more precisely and, unlike the swarm, transfers to other reward structures---the price and
-the point of having no learner. The reinforcement learning here is the problem and the (approximate) optimum
-reached, emergent from physics.
+and that it does so by \emph{reaching} this allocation rather than by \emph{learning} it. Given a reward signal
+and a training budget, a learner reaches the optimum more precisely, converges modestly higher in the embodied
+setting, and transfers to other reward structures; the swarm's return is a strong zero-shot operating point at
+none of that cost, leading in the low-budget regime---the price and the point of having no learner. The
+reinforcement learning here is the problem and the (approximate) optimum reached, emergent from physics.
 
 % =====================================================================
 \section*{Competing interests}
@@ -721,31 +709,45 @@ state rather than hide.
 
 \section{Embodied learner comparison}
 \label{app:embodied}
-Both arms share one spatial environment: a torus with $N=200$ agents, local sensing radius $r$,
-Pareto-clumped resources that deplete and respawn, horizon $T=600$. Each agent's observation is local
-(on-resource; a resource sensed within range; a binned local fraction of foraging neighbours) and its actions
-are $\{$explore (a L\'evy/Brownian step), approach the nearest sensed signal, stay$\}$. The \emph{swarm} arm
-applies the fixed recruitment$+$blocking rule over this observation/action set (reward-free); the
-\emph{learner} arm replaces the rule with an independent per-agent tabular softmax policy trained online by
-REINFORCE with a per-agent baseline, reward $=$ per-capita intake. Only the controller differs---sensing,
-movement, and actions are identical---so the comparison isolates fixed versus learned control under matched
-embodiment and partial observability. Because both arms use the \emph{same} movement primitives and step
-budget, the fairness of this comparison does not rely on the companion paper's movement-neutrality claim: it is
-matched by construction here. Metrics are measured in-environment: cumulative intake over the horizon,
-IFD matching slope and Nash-gap on the committed occupancy, and recovery after a mid-run resource relocation.
-$B=48$ replicas, bootstrap CIs. The learning rate was swept over $\{0.1,0.3,0.6,1.0,2.0\}$ and the gap to the
-swarm is robust ($0.52$--$0.62\times$ its intake). This is a deliberately simple, minimal learner, not a tuned
-state-of-the-art agent, so the result \emph{bounds} rather than settles the general comparison; the point is
-that a fixed reward-free mechanism is not easily matched by \emph{online decentralized} spatial RL under equal
-embodiment. To test whether \emph{capacity} (rather than budget) closes the gap, we added two stronger learners
-in the same environment (Fig.~\ref{fig:stronger}): a shared-weight MLP policy over a richer local observation,
-and a centralised-critic (CTDE, MAPPO/COMA-style) learner with a decentralised actor. At $T{=}1500$, $B{=}32$
-replicas plus a four-seed stability sweep, the fraction of the oracle ceiling is $0.32$ (simple), $0.37$
-(richer-obs), $0.38$ (centralised critic), versus $0.68$ for the swarm. We report the entropy-regularised
-(stable) configuration as the headline; entropy-free runs occasionally spike toward the swarm on a lucky seed
-but collapse on most seeds (shown as the instability whiskers). Because the learners share one policy network
-across replicas, their effective uncertainty is the seed spread, not the narrower replica bootstrap; the
-swarm's replicas are independent.
+All arms share one spatial environment: a torus with $N=200$ agents per replica world, a local sensing radius,
+Pareto-clumped resources that deplete and respawn, and the action set $\{$explore (a L\'evy/Brownian step),
+approach the nearest sensed signal, stay$\}$. The \emph{swarm} arm applies the fixed recruitment$+$blocking
+rule over this observation/action set, reward-free. Each \emph{learner} arm replaces the rule with a trained
+policy over the same action set; only the controller differs---sensing, movement, and actions are
+identical---so the comparison isolates fixed versus learned control under matched embodiment and partial
+observability. Because both arms use the \emph{same} movement primitives and step budget, the fairness of this
+comparison does not rely on the companion paper's movement-neutrality claim: it is matched by construction here.
+
+\paragraph{Learners.} We train two standard algorithms. \emph{IPPO} is independent PPO---a clipped surrogate
+with generalised advantage estimation and an entropy bonus, a shared-weight actor with a per-agent
+\emph{local} critic. \emph{MAPPO} uses the same actor with a \emph{centralised} critic over a $32$-dimensional
+privileged global state (per-clump occupancy, richness, and live capacity, plus totals), with decentralised
+execution (CTDE). Both see a rich $14$-dimensional egocentric observation (on-resource flag; nearest-resource
+proximity and direction; local and wide resource density; neighbour-foraging fraction and local degree;
+nearest on-food neighbour proximity and direction; own short-memory intake and on-food fraction)---at least as
+informative as what the swarm effectively uses, so the learner is advantaged on \emph{information}, not
+handicapped. Training uses a dense shaped reward (per-step per-capita intake plus $0.05\times$
+resource-proximity); \emph{evaluation always uses the true intake fraction of the oracle ceiling}, never the
+shaped reward. The oracle ceiling is $\min(N,\sum\text{cap})$ per step, a strict upper bound that no realised
+run (swarm, learner, or random) approaches.
+Hyperparameters (shared, lightly chosen on confirmation runs): learning rate $3\times10^{-4}$, a $64\times2$
+$\tanh$ MLP, rollout $128$, $4$ epochs, $8$ minibatches, clip $0.2$, $\gamma=0.99$, $\lambda=0.95$, value
+coefficient $0.5$, entropy $0.01$, gradient-norm clip $0.5$, Adam.
+
+\paragraph{Protocol and result.} Each learner is trained for $15{,}000$ environment steps and scored on a
+trailing $2{,}000$-step window; we run $16$ seeds per algorithm (the seed is the unit of uncertainty, since the
+shared-weight policy couples replicas) and compare against multi-seed reward-free swarm and random-action
+references on the same fields. Fractions of the oracle ceiling: random $0.36$; swarm $0.65$ at zero training;
+IPPO $0.75$ (median $0.73$); MAPPO $0.74$ (median $0.72$). All $32$ learner seeds finish above the swarm mean;
+the learning curves plateau (flat from ${\sim}8{,}000$ to $15{,}000$ steps), and both learners cross the swarm
+at ${\approx}4{,}000$ environment steps---${\approx}6.4\times10^{6}$ agent-steps ($4{,}000$ steps $\times\,N{=}200$
+across the $R{=}8$ parallel replica worlds), about a quarter of the $15{,}000$-step run (Fig.~\ref{fig:stronger}). Correctness checks: the learners rise far above the random
+$0.36$ (they are clearly learning), and the same PPO implementation climbs the ideal-free matching slope on the
+easy abstract congestion game (App.~\ref{app:marl}), confirming the implementation is sound. A note on an
+earlier version: a deliberately simple online REINFORCE controller plateaued near $0.37$---barely above
+random---and an initial read mistook that weak baseline for evidence that an embodied learner cannot match the
+swarm. The properly-trained learners here correct that: the swarm's advantage is a zero-shot / low-budget one,
+not an asymptotic ceiling on the learner.
 
 % =====================================================================
 \bibliographystyle{tmlr}
