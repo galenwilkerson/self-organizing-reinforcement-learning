@@ -42,39 +42,28 @@
 
 \begin{abstract}
 The explore/exploit trade-off is the core problem of reinforcement learning (RL). We show that a minimal
-foraging swarm \emph{approaches the optimum}---the ideal-free / Nash-equilibrium allocation of the multi-agent
-sharing game (an equilibrium, not a return maximum)---with no learner and no reward signal: self-organization
-does the work. Agents explore by heavy-tailed (L\'evy) flights, recruit
-neighbours to a discovery through a threshold cascade on their proximity network, and disperse again as a patch
-crowds. This cascade cycle automatically balances exploration against exploitation and drives the collective
-toward the optimal allocation of foragers across patches---the \emph{ideal free distribution} (foragers in
-proportion to richness; the Nash equilibrium of the habitat-sharing game). We are careful about what
-``reaches'' means: the swarm attains the \emph{shape} of this optimum (committed foragers track richness with
-slope $0.94$) but not its exact equilibrium---it remains measurably exploitable. Because resource is shared,
-total intake is the same for any interior allocation, so the optimum is a load-balancing \emph{equilibrium},
-not a total-harvest maximum; the harvesting-efficiency side of foraging is analysed in the companion
-paper~\citep{partI}. The matching is reached dynamically (within ${\sim}150$ steps) and is produced by the
-coupling of recruitment to movement: remove the coupling and it collapses (slope $0.94\!\to\!0.08$). We are
-deliberate about \emph{where} the reinforcement learning lives: at the level of the \emph{problem} and the
-\emph{allocation reached}, not in the micro-dynamics. No step of the rule evaluates payoff---recruitment
-responds to a local crowd signal---so the mechanism is reward-free \emph{by construction}; because under
-resource sharing that crowd signal is informationally tied to payoff, ``reward-free'' is a statement about the
-implementation, not a claim that no payoff-equivalent information is used. The swarm also \emph{reaches} this
-allocation without \emph{learning} it: its quality plateaus and re-settles after the resources move, with no
-cumulative gain. Against a trained reinforcement-learning baseline the comparison is two-sided. In an \emph{easier, disembodied}
-version of the game a learner reaches the optimum more precisely. In the \emph{same embodied} environment as the
-swarm---matched sensing, movement, and actions---the reward-free swarm, at zero training, reaches ${\approx}65\%$
-of a validated oracle ceiling, while properly-trained independent-PPO and centralised-critic (CTDE) learners
-converge \emph{above} it, to ${\approx}74$--$75\%$ ($16$ seeds each, every seed above the swarm mean). The
-swarm's advantage is in \emph{budget}, not asymptote: it operates at this level with no reward signal and no
-training, and leads the learners until they overtake it, which takes ${\approx}4{,}000$ of the $15{,}000$
-training environment-steps (they plateau by ${\approx}10^{4}$). (An earlier weak online baseline appeared
-to lose to the swarm outright; properly trained, it does not---we report the corrected result.) We scope this
-to one minimal setting---it \emph{bounds} rather than settles the comparison---and read it not as beating
-reinforcement learning but as a strong \emph{zero-shot, reward-free} operating point, worth pursuing where a
-reward signal or a training budget is scarce. The result is a concrete demonstration that the self-organizing
-physics of a minimal swarm can carry a collective close to the optimum reinforcement learning seeks, with none
-of reinforcement learning's machinery. The companion paper~\citep{partI} develops the underlying mechanism.
+foraging swarm \emph{approaches} its optimum---the ideal-free / Nash allocation of a multi-agent resource-sharing
+game (an equilibrium, not a return maximum: shared resource makes total intake allocation-invariant, so the
+optimum load-balances rather than maximizes harvest)---with no learner and no reward signal. Agents explore by
+heavy-tailed (L\'evy) flights, recruit neighbours to a discovery through a threshold cascade on their proximity
+network, and disperse as a patch crowds; this cascade cycle balances exploration against exploitation and drives
+foragers toward the \emph{ideal free distribution} (numbers in proportion to richness). The swarm attains the
+\emph{shape} of this optimum (committed foragers track richness with slope $0.94$) but not its exact
+equilibrium---it stays measurably exploitable---and reaches it dynamically (${\sim}150$ steps) through the
+coupling of recruitment to movement: remove the coupling and matching collapses ($0.94\!\to\!0.08$). The
+reinforcement learning sits at the level of the \emph{problem} and the \emph{allocation reached}, not the
+micro-rule: no step evaluates payoff (reward-free \emph{by construction}, though under sharing the crowd signal
+is informationally tied to payoff), and the swarm reaches the allocation without \emph{learning} it (quality
+plateaus and re-settles after the resources move, with no cumulative gain). Against a trained baseline the
+comparison is two-sided: in an easier, disembodied game a learner is more precise, while in the \emph{same
+embodied} environment the reward-free swarm reaches ${\approx}65\%$ of a validated oracle ceiling at zero
+training and leads until properly-trained PPO and centralised-critic (CTDE) learners overtake it
+(${\approx}74$--$75\%$, $16$ seeds each, all above the swarm mean) after ${\approx}4{,}000$ of $15{,}000$ training
+steps---its advantage is in \emph{budget}, not asymptote (correcting an earlier weak-baseline result). In this
+one minimal setting we read it not as beating RL but as a strong \emph{zero-shot, reward-free} operating point:
+a concrete demonstration that the self-organizing physics of a minimal swarm can carry a collective close to the
+optimum RL seeks, with none of RL's machinery. A companion paper develops the mechanism and the
+harvesting-efficiency side of foraging.
 \end{abstract}
 
 % =====================================================================
