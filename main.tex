@@ -15,7 +15,11 @@
 %  Part I citation; add permission line to reproduced Figs 1-2 if Part I is published.
 % =====================================================================
 \documentclass{article}
-\usepackage{tmlr}      % submission = anonymized/double-blind; use [accepted] for camera-ready
+% Build flag. Default build = anonymized (journal / double-blind, TMLR style).
+% De-anonymized arXiv build:  pdflatex -jobname main_arxiv "\def\arxivbuild{} \input{main}"
+\newif\ifanon
+\ifdefined\arxivbuild \anonfalse \else \anontrue \fi
+\ifanon \usepackage{tmlr} \else \usepackage[preprint]{tmlr} \fi
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \graphicspath{{figures/}}
@@ -25,8 +29,12 @@
             urlcolor=blue!50!black]{hyperref}
 
 \title{Self-organizing reinforcement learning: a swarm approaches the explore--exploit optimum}
-% Author block, affiliation, and email restored at camera-ready (anonymized for double-blind review).
-\author{}
+% Anonymized for journal/double-blind; real author block in the arXiv build.
+\ifanon
+  \author{}
+\else
+  \author{\name Galen J. Wilkerson \email gwilkerson@komplexai.io \\ \addr Komplexity AI LLC}
+\fi
 
 \begin{document}
 \maketitle
@@ -599,14 +607,25 @@ reached, emergent from physics.
 
 % =====================================================================
 \section*{Competing interests}
+\ifanon
 Omitted for anonymized review; competing interests are declared in the submission metadata and will be stated
 in the camera-ready version.
+\else
+The author has filed a provisional patent application related to the recruitment-switching mechanism described
+in this work.
+\fi
 
 \section*{Data and code availability}
+\ifanon
 Complete simulation code, precomputed sweep data, figure-regenerating scripts, and an interactive
 browser-based demo of the mechanism are available in a code repository. To preserve anonymity, the repository
 is kept private and its URL---together with the publicly hosted, runnable demo---is withheld for review; both
 will be released publicly in the camera-ready version.
+\else
+Complete simulation code, precomputed sweep data, figure-regenerating scripts, and an interactive
+browser-based demo of the mechanism are available from the author on request, and will be released publicly
+(with a hosted, runnable demo) upon publication.
+\fi
 
 % =====================================================================
 \appendix
@@ -705,6 +724,6 @@ embodiment.
 
 % =====================================================================
 \bibliographystyle{tmlr}
-\bibliography{refs}
+\ifanon \bibliography{refs} \else \bibliography{refs_arxiv} \fi
 
 \end{document}
