@@ -5,12 +5,12 @@
        (1) empirical phase portrait  (poised window / SOC drive-avalanche cycle)
        (2) scale-free recruited-cluster CCDF  (local self-organized criticality)
        (3) giving-up-density histogram  (marginal-value patch-leaving — blocking as the cause)
-       (4) IFD matching scatter  (ideal free distribution = reinforcement learning with no learner) -->
+       (4) IFD matching scatter  (ideal-free allocation = the bandit optimum, reached with no learner) -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Collective foraging from simple recruitment cascades: a maximum-entropy path to natural, learner-free reinforcement learning</title>
+<title>Self-organizing reinforcement learning: a swarm approaches the explore–exploit optimum</title>
 <style>
   :root{ --grey:#7d7d82; --blue:#1250f0; --green:#16c74a; --red:#e41616; --ink:#222; }
   body{ font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; color:var(--ink);
@@ -47,17 +47,19 @@
 </head>
 <body>
   <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:0 0 8px">
-    <h1 style="margin:0">Collective foraging from simple recruitment cascades:</h1>
-    <span style="font-size:16px;color:#444;font-weight:600">a maximum-entropy path to natural, learner-free reinforcement learning</span>
+    <h1 style="margin:0">Self-organizing reinforcement learning</h1>
+    <span style="font-size:16px;color:#444;font-weight:600">a swarm approaches the explore–exploit optimum — no learner, no reward signal</span>
   </div>
-  <p class="sub">A threshold <b>contagion</b> (Watts/Granovetter LTM) embedded in space, where the signal
-  outruns the agents: a discovery <b>recruits</b> neighbours through a cascade on the proximity graph;
-  <b>fraction-normalised</b> activation both spreads it <i>and</i> stifles it once crowded (<b>blocking</b>);
-  the cascade rewires its own graph. Resources are sparse and <b>clumped</b> — the entropically generic
-  (maximum-entropy) field. One running swarm — and the <b>elegant coincidences</b> build <i>live</i> in the
-  panels: the self-organized cascade window, the poised SOC drive–avalanche cycle, scale-free avalanches,
-  marginal-value patch-leaving, the ideal-free distribution (reinforcement learning with no learner), the
-  two maximum entropies (Lévy search ↔ resource field), and near-critical branching.</p>
+  <p class="sub">A threshold <b>contagion</b> (Watts/Granovetter LTM) embedded in space: a discovery
+  <b>recruits</b> neighbours through a cascade on the proximity graph; <b>fraction-normalised</b> activation
+  both spreads it <i>and</i> stifles it once crowded (<b>blocking</b>); the cascade rewires its own graph.
+  Resources are sparse and <b>clumped</b> (heavy-tailed / Pareto). With one local rule, no central control, and
+  <b>no learner and no reward signal</b>, the swarm balances exploration against exploitation and settles at
+  the <b>ideal-free allocation</b> — foragers in proportion to patch <i>richness</i>: the optimum of a
+  multi-armed (congestion) <b>bandit</b>, <i>approached</i> rather than learned. The panels build <i>live</i>:
+  the swarm's approach to that allocation (panel 4), and the <b>self-organizing mechanism</b> behind it — the
+  cascade window, the drive–avalanche cycle, scale-free avalanches, marginal-value patch-leaving, and
+  near-critical branching (developed in the companion paper).</p>
 
   <div class="legend">
     <span><i class="dot" style="background:var(--grey)"></i> explore (Lévy search)</span>
@@ -91,9 +93,9 @@
         <canvas id="ccdf" width="348" height="206"></canvas></div>
       <div class="cell" title="Resource left when a patch is abandoned. Peaked above zero = agents leave before the patch is empty — marginal-value patch-leaving, with no rate estimate."><div class="t">3 · Giving-up density <small>— leave before empty</small></div>
         <canvas id="gud" width="348" height="206"></canvas></div>
-      <div class="cell" title="Agents committed per patch vs patch richness. Slope→1 means the swarm spreads in proportion to reward: the ideal free distribution — reinforcement learning with no learner."><div class="t">4 · Ideal free distribution <small>— RL without a learner</small></div>
+      <div class="cell" title="Agents committed per patch vs patch richness. Slope→1 means the swarm spreads in proportion to patch richness: the ideal-free allocation — the optimum of a multi-armed (congestion) bandit, reached with no learner and no reward signal."><div class="t">4 · Ideal free distribution <small>— the bandit optimum, no learner</small></div>
         <canvas id="ifd" width="348" height="206"></canvas></div>
-      <div class="cell" title="Search efficiency vs Lévy exponent α. Heavy-tailed search is optimal, and the best α tracks the field's clustering — both are maximum-entropy choices. Dot = live field × current α."><div class="t">5 · Two maximum entropies <small>— offline curves; dot = live field × α</small></div>
+      <div class="cell" title="Search efficiency vs Lévy exponent α. Heavy-tailed (Lévy) search is most efficient, and the best α tracks the resource field's clustering. Dot = live field × current α."><div class="t">5 · Lévy search ↔ field clustering <small>— offline curves; dot = live field × α</small></div>
         <canvas id="maxent" width="348" height="206"></canvas></div>
       <div class="cell" title="Offspring per active agent, per cascade. Poised just below σ=1 (critical) — self-organized criticality, reached with no tuning."><div class="t">6 · Branching ratio σ <small>— poised near critical (SOC)</small></div>
         <canvas id="sigma" width="348" height="206"></canvas></div>
@@ -202,7 +204,7 @@ const wrap=(x,s)=>((x%s)+s)%s;
 // ---- init ----
 function init(){
   tick=0;
-  // Resources are CLUMPED by default (sparse clustering = the entropically generic / maximum-entropy field,
+  // Resources are CLUMPED by default (sparse, heavy-tailed / Pareto clustering = the common natural field,
   // where recruitment pays). P.SCATTER=1 places them UNIFORMLY-random to show recruitment over-concentrates.
   if(P.SCATTER){
     blobs=Array.from({length:P.B},()=>{const r=Math.max(2,P.S*(0.5+0.9*Math.random()));
