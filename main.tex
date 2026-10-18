@@ -64,11 +64,11 @@ cumulative gain. Against a trained reinforcement-learning baseline the compariso
 disembodied} version of the game a learner reaches the optimum more precisely, but in the \emph{same embodied}
 environment as the swarm---matched sensing, movement, and actions---the reward-free swarm reaches ${\approx}55\%$ of a
 validated oracle ceiling at zero training, ahead of an online decentralized learner's ${\approx}34\%$ (the $1.67\times$
-intake ratio), and stays ahead across a horizon$\times$nonstationarity sweep. Both stay far from the ceiling,
-and the learner is \emph{not} budget-limited (it converges, and the gap is robust to learning rate); the
-plausible---but untested---explanation is a limit of its local architecture, so closing the gap would likely
-need a higher-capacity learner rather than more training. We scope the claim to this one minimal setting and decentralized
-learner class---it \emph{bounds} rather than settles the comparison---and read it not as beating reinforcement
+intake ratio), and stays ahead across a horizon$\times$nonstationarity sweep. The gap is not a weak-baseline
+artifact: it is not budget-limited (the learner converges), and \emph{higher capacity does not close it}
+either---richer-observation and centralised-critic (CTDE) learners reach only ${\approx}0.38$ of the oracle
+ceiling versus the swarm's ${\approx}0.68$ in the same environment. We scope the claim to this one minimal
+setting---it \emph{bounds} rather than settles the comparison---and read it not as beating reinforcement
 learning but as evidence the mechanism is \emph{worth pursuing}: it approaches the optimum competitively,
 without the learner's overhead. The result is a concrete demonstration that the self-organizing physics of a minimal swarm can carry
 a collective close to the optimum reinforcement learning seeks, with none of reinforcement learning's
@@ -456,16 +456,21 @@ of \S\ref{sec:solve}, so the $0.94$ headline is not universal.) The lead is \emp
 sweep of horizon $T$ and resource-relocation interval (nonstationarity), the swarm leads in \emph{every} cell,
 and the margin \emph{grows} with the horizon rather than closing (Fig.~\ref{fig:crossover}). The learner is not
 a strawman---its intake converges by ${\sim}100$ steps and it re-adapts after a mid-run relocation, the gap
-robust across learning rates ($0.1$--$2.0$)---so it is \emph{not budget-limited}: it plateaus at a policy
-ceiling well below the swarm, and more training does not help. The plausible (but untested) explanation is a
-limit of its local architecture rather than its budget. We are careful what this
-does and does not show. Both embodied controllers stay well below the ceiling ($23$--$66\%$ swarm, $18$--$34\%$
-learner), so the honest reading is that the fixed mechanism is the better \emph{embodied} controller here; that
-a \emph{higher-capacity or centralised} learner---not more training---is what it would take to overtake (which
-we did not test); and that we therefore claim not that the swarm \emph{beats} reinforcement learning but that
-it is \emph{competitive without the learner's overhead} (no training, no reward signal, no parameters), worth
-pursuing as a low-overhead coordination primitive. This is one minimal shared environment and one decentralized
-learner class, which \emph{bounds} rather than settles the general comparison.
+robust across learning rates ($0.1$--$2.0$)---so it is \emph{not budget-limited}. We then tested whether
+\emph{capacity} closes the gap, with two stronger learners in the same environment: a richer-observation MLP
+policy and a centralised-critic (CTDE) learner. It does not. Capacity gives only a small, ordered gain---fraction
+of the oracle ceiling $0.32$ (simple) $\to0.37$ (richer-obs) $\to0.38$ (centralised critic)---while the
+reward-free swarm reaches $0.68$ at zero training; all three learners reliably attain only ${\sim}57\%$ of the
+swarm's level, a ${\sim}1.8\times$ gap with non-overlapping confidence intervals (Fig.~\ref{fig:stronger}). The
+only learner runs that approach the swarm are \emph{unstable}, entropy-free seeds that collapse on most seeds,
+not a reliable operating point. So the swarm's advantage is \emph{not} a weak-baseline artifact: it reflects the
+difficulty of online, decentralised spatial coordination from local reward. We remain careful about scope. Both
+controllers stay below the oracle ceiling, so this says the fixed mechanism is the better \emph{embodied}
+controller across the learner capacities we tried---not that the swarm \emph{beats} reinforcement learning in
+general (a state-of-the-art MARL pipeline is out of scope); we claim it is \emph{competitive without the
+learner's overhead} (no training, no reward signal, no parameters), worth pursuing as a low-overhead
+coordination primitive. This is one minimal shared environment, which \emph{bounds} rather than settles the
+general comparison.
 
 \paragraph{What a learner still buys: transfer.} One advantage of learning is unambiguous. In the abstract
 game's non-congestion regime (fixed per-patch reward, optimum $=$ concentrate on the richest patch) the
@@ -508,12 +513,24 @@ transfer point on the abstract game.)
   \caption{\textbf{The swarm's lead is robust across horizon and nonstationarity.} Fraction of the oracle
   ceiling, swarm minus learner ($\Delta$), over a sweep of horizon $T$ and resource-relocation interval (smaller
   interval $=$ more nonstationary); $B=32$ paired replicas. $\Delta>0$ in all $16$ cells---the swarm is ahead
-  everywhere---and the margin \emph{grows} with $T$ (the learner does not amortise---not budget-limited;
-  plausibly an architecture limit, untested)
+  everywhere---and the margin \emph{grows} with $T$ (the learner does not amortise; it is not budget-limited,
+  and higher capacity does not close it either---Fig.~\ref{fig:stronger})
   and with stationarity. The embodied point of Fig.~\ref{fig:embodied} ($T=600$, stationary) is one cell. Both
   controllers stay well below the ceiling (swarm $23$--$66\%$, learner $18$--$34\%$), so this shows the swarm is
   the better \emph{embodied} controller in this learner class, not that either is near-optimal.}
   \label{fig:crossover}
+\end{figure}
+
+\begin{figure}[t]\centering
+  \includegraphics[width=0.72\linewidth]{fig_stronger.pdf}
+  \caption{\textbf{The gap is not a weak-baseline artifact: higher capacity does not close it.} Fraction of the
+  oracle ceiling (last $30\%$ of a $T{=}1500$ run) for the reward-free swarm (zero training) vs.\ three learners
+  of increasing capacity in the \emph{same} embodied environment: simple tabular REINFORCE, a richer-observation
+  MLP, and a centralised-critic (CTDE) learner. Capacity gives only a small ordered gain
+  ($0.32\to0.37\to0.38$), all far below the swarm's $0.68$; bars show the stable (entropy-regularised)
+  configuration, red whiskers the entropy-free seed-to-seed instability (occasional lucky seeds spike, most
+  collapse). $B=32$ replicas (plus a 4-seed stability sweep).}
+  \label{fig:stronger}
 \end{figure}
 
 \begin{table}[H]
@@ -577,15 +594,15 @@ by the crowding cutoff: a single-operating-point ablation here finds the matchin
 when the cutoff is removed ($0.94\to0.92$; App.~\ref{app:dynamics}), a consistency check alongside Part I's
 swept characterisation. (iii) The
 trained-learner comparison includes both an abstract game and an embodied, partially-observed contest
-(\S\ref{sec:compare}); the embodied result is one minimal environment with a simple independent learner, so it
-\emph{bounds} rather than settles the general swarm-vs-RL question---a richer or centrally-trained learner
-could narrow the gap. (iv) We give no closed-form regret or convergence-rate bound.
+(\S\ref{sec:compare}); the embodied result held across learner capacities we tried (up to a centralised-critic
+CTDE learner, Fig.~\ref{fig:stronger}), but it is one minimal environment, so it \emph{bounds} rather than
+settles the general swarm-vs-RL question---a full state-of-the-art MARL pipeline is out of scope. (iv) We give
+no closed-form regret or convergence-rate bound.
 
-\paragraph{Outlook.} The crossover sweep (\S\ref{sec:compare}, Fig.~\ref{fig:crossover}) shows the learner's gap
-does not close with horizon or nonstationarity (it is not budget-limited), pointing---though we did not test
-it---to a limit of the learner's architecture, so the decisive open test is a \emph{higher-capacity} learner
-(richer observations, a centralised critic): does the swarm's advantage persist as learner capacity grows? A convergence-rate / regret characterisation of the physical flow against standard
-bandit algorithms would also sharpen the reading.
+\paragraph{Outlook.} The swarm's embodied advantage held against both horizon/nonstationarity
+(Fig.~\ref{fig:crossover}) and learner capacity up to a centralised critic (Fig.~\ref{fig:stronger}); the
+natural next steps are a full state-of-the-art MARL pipeline (deep policies, longer training, careful tuning)
+and a convergence-rate / regret characterisation of the physical flow against standard bandit algorithms.
 
 \paragraph{Why it matters.} As an engineering primitive, the mechanism delivers a close approximation of the
 explore/exploit optimum---a load-balanced, near-ideal-free allocation---with no model, no reward signal, no
@@ -720,7 +737,15 @@ $B=48$ replicas, bootstrap CIs. The learning rate was swept over $\{0.1,0.3,0.6,
 swarm is robust ($0.52$--$0.62\times$ its intake). This is a deliberately simple, minimal learner, not a tuned
 state-of-the-art agent, so the result \emph{bounds} rather than settles the general comparison; the point is
 that a fixed reward-free mechanism is not easily matched by \emph{online decentralized} spatial RL under equal
-embodiment.
+embodiment. To test whether \emph{capacity} (rather than budget) closes the gap, we added two stronger learners
+in the same environment (Fig.~\ref{fig:stronger}): a shared-weight MLP policy over a richer local observation,
+and a centralised-critic (CTDE, MAPPO/COMA-style) learner with a decentralised actor. At $T{=}1500$, $B{=}32$
+replicas plus a four-seed stability sweep, the fraction of the oracle ceiling is $0.32$ (simple), $0.37$
+(richer-obs), $0.38$ (centralised critic), versus $0.68$ for the swarm. We report the entropy-regularised
+(stable) configuration as the headline; entropy-free runs occasionally spike toward the swarm on a lucky seed
+but collapse on most seeds (shown as the instability whiskers). Because the learners share one policy network
+across replicas, their effective uncertainty is the seed spread, not the narrower replica bootstrap; the
+swarm's replicas are independent.
 
 % =====================================================================
 \bibliographystyle{tmlr}
