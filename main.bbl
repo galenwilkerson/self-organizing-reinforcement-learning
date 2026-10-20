@@ -5,12 +5,6 @@
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
 
-\bibitem[Anonymous(2026)]{partI}
-Anonymous.
-\newblock Title withheld for anonymized review, 2026.
-\newblock Companion paper (Part~I); arXiv preprint, title and identifier
-  withheld for anonymized review.
-
 \bibitem[Bloembergen et~al.(2015)Bloembergen, Tuyls, Hennes, and
   Kaisers]{bloembergen2015evolutionary}
 Daan Bloembergen, Karl Tuyls, Daniel Hennes, and Michael Kaisers.
@@ -135,6 +129,12 @@ John~Glen Wardrop.
 \newblock Some theoretical aspects of road traffic research.
 \newblock \emph{Proceedings of the Institution of Civil Engineers}, 1\penalty0
   (3):\penalty0 325--362, 1952.
+
+\bibitem[Wilkerson(2026)]{partI}
+Galen~J. Wilkerson.
+\newblock A general mechanism for collective foraging: percolating recruitment
+  cascades coupled to a maximum-entropy field, 2026.
+\newblock Companion paper (Part~I), under review.
 
 \bibitem[Ziebart et~al.(2008)Ziebart, Maas, Bagnell, and
   Dey]{ziebart2008maxent}

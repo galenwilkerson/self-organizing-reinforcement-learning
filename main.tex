@@ -19,7 +19,7 @@
 % Build flag. Default build = anonymized (journal / double-blind, TMLR style).
 % De-anonymized arXiv build:  pdflatex -jobname main_arxiv "\def\arxivbuild{} \input{main}"
 \newif\ifanon
-\ifdefined\arxivbuild \anonfalse \else \anontrue \fi
+\anonfalse % arXiv version only (de-anonymized); anon/TMLR double-blind path removed 2026-10-20
 \ifanon \usepackage{tmlr} \else \usepackage[preprint]{tmlr} \fi
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
@@ -29,7 +29,7 @@
 \usepackage[colorlinks=true,linkcolor=blue!50!black,citecolor=blue!50!black,
             urlcolor=blue!50!black]{hyperref}
 
-\title{Self-organizing reinforcement learning: a swarm approaches the explore--exploit optimum}
+\title{Self-organizing reinforcement learning: a learner-free swarm approaches the explore--exploit optimum}
 % Anonymized for journal/double-blind; real author block in the arXiv build.
 \ifanon
   \author{}
@@ -740,6 +740,6 @@ not an asymptotic ceiling on the learner.
 
 % =====================================================================
 \bibliographystyle{tmlr}
-\ifanon \bibliography{refs} \else \bibliography{refs_arxiv} \fi
+\bibliography{refs}
 
 \end{document}
