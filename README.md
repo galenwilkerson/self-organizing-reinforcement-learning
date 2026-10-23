@@ -1,7 +1,7 @@
-# A learner-free, self-organizing swarm approaches the allocation of reinforcement learning's explore–exploit optimum
+# A learner-free, self-organizing swarm approaches reinforcement learning's explore–exploit optimum
 
-Code and manuscript for the paper *"A learner-free, self-organizing swarm approaches the allocation of
-reinforcement learning's explore–exploit optimum."*
+Code and manuscript for the paper *"A learner-free, self-organizing swarm approaches reinforcement
+learning's explore–exploit optimum."*
 
 A minimal foraging swarm — Lévy exploration + a threshold recruitment cascade on the proximity graph +
 density-dependent dispersal — self-organizes to the ideal-free / Nash-equilibrium allocation of a multi-agent
