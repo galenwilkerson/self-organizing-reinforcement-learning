@@ -1,7 +1,7 @@
-# A learner-free, self-organizing swarm approaches reinforcement learning's explore–exploit optimum
+# A learner-free, self-organizing swarm approaches the allocation of reinforcement learning's explore–exploit optimum
 
-Code and manuscript for the paper *"A learner-free, self-organizing swarm approaches reinforcement
-learning's explore–exploit optimum."*
+Code and manuscript for the paper *"A learner-free, self-organizing swarm approaches the allocation of
+reinforcement learning's explore–exploit optimum."*
 
 A minimal foraging swarm — Lévy exploration + a threshold recruitment cascade on the proximity graph +
 density-dependent dispersal — self-organizes to the ideal-free / Nash-equilibrium allocation of a multi-agent
@@ -29,9 +29,15 @@ than *learning* (see the paper for the precise, calibrated claims).
 
 ## Interactive demo
 
-A self-contained, browser-based demo — this paper's reward-free / learner-free version — is in
-[`demos/collective_foraging_demo.html`](demos/collective_foraging_demo.html). No install: just open the file
-in a browser.
+**Run it live in your browser:**
+[**galenwilkerson.github.io/collective_foraging_demo_rl.html**](https://galenwilkerson.github.io/collective_foraging_demo_rl.html)
+— this paper's reward-free / learner-free swarm, no install. (The source is also bundled here in
+[`demos/collective_foraging_demo.html`](demos/collective_foraging_demo.html).)
+
+<a href="https://galenwilkerson.github.io/collective_foraging_demo_rl.html"><img src="demos/demo_swarm.png" width="420" alt="Swarm window of the live demo"></a>
+
+*The swarm window: grey agents linked by the proximity graph, a green discovery (seed) triggering a red
+recruitment cascade; agents disperse as resource patches (tan) crowd.*
 
 ## Repository layout
 

@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this code, please cite the paper."
-title: "A learner-free, self-organizing swarm approaches reinforcement learning's explore–exploit optimum"
+title: "A learner-free, self-organizing swarm approaches the allocation of reinforcement learning's explore–exploit optimum"
 authors:
   - family-names: Wilkerson
     given-names: Galen J.

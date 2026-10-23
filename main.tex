@@ -9,6 +9,15 @@
 %  negligible effect on the result (clustered harvest 0.763 vs 0.765). Claim-softening/wording edits (temper
 %  "best-allocated", criticality vocab, ecological wording) + reflow/style audit are applied AFTER the 150k
 %  results land. v4 frozen as the committee-reviewed snapshot.
+%  v5 TMLR DESK-PASS CONSENSUS CORRECTIONS (2026-10-23, 3 independent reviewers, all = accept-w/-minor):
+%    (1) TITLE tempered -> "approaches the ALLOCATION of ... optimum" (shape reached, not full equilibrium);
+%    (2) ABSTRACT: Nash-gap 0.58 quantified, scarce-field loss (0.33 vs 0.22) made co-equal not parenthetical,
+%        margin basis + R^2=0.67 added; (3) +-0.02 TOST margin JUSTIFIED (~2x per-seed CI, 2.5% of ceiling) +
+%        sensitivity stated; (4) extreme raw p-values (3e-23, 4e-12) -> p<0.001 w/ unit (Welch t, 16 seeds);
+%        (5) reward-shaping/entropy confound DISCLOSED (App embodied) + "gradient-faithful" claim scoped to
+%        "learners as configured"; (6) slope-regression independence unit (B=64 worlds) made explicit;
+%        (7) App robust: clarified the patchiness sweep is the swarm's OWN allocation, harvest contest = 2 endpoints.
+%    Text-only; no new experiments. All three reviews in paper2_rl_v5/_working_notes/.
 % =====================================================================
 %  v4 (2026-10-22): EMBODIED comparison reframed on the fair, sensing-limited (F1) GPU experiment
 %  (step3_gpu). The earlier fig_stronger gave both arms a clairvoyant "approach nearest live resource at
@@ -54,7 +63,10 @@
 \usepackage[colorlinks=true,linkcolor=blue!50!black,citecolor=blue!50!black,
             urlcolor=blue!50!black]{hyperref}
 
-\title{A learner-free, self-organizing swarm approaches reinforcement learning's explore--exploit optimum}
+% Title tempered per TMLR desk-pass consensus (all 3 reviewers): scoped to the ALLOCATION of the optimum --
+% we approach the optimum's allocation (shape, slope~1), not its full equilibrium (we stay measurably
+% exploitable). Original: "A learner-free, self-organizing swarm approaches reinforcement learning's explore--exploit optimum"
+\title{A learner-free, self-organizing swarm approaches the allocation of reinforcement learning's explore--exploit optimum}
 % Anonymized for journal/double-blind; real author block in the arXiv build.
 \ifanon
   \author{}
@@ -68,26 +80,21 @@
 
 \begin{abstract}
 The explore--exploit trade-off is the core problem of reinforcement learning (RL). We show that a minimal
-foraging swarm \emph{approaches} its optimum---the ideal-free / Nash allocation of a multi-agent resource-sharing
-game (an equilibrium allocation that is harvest-invariant, not a return maximum)---with no learner and no reward
-signal. Agents explore by
-heavy-tailed (L\'evy) flights, recruit neighbours to a discovery through a threshold cascade on their proximity
-network, and disperse as a patch crowds; this cascade cycle balances exploration against exploitation and drives
-foragers toward numbers in proportion to richness. The swarm attains the \emph{shape} of this optimum but not
-its exact equilibrium---it stays measurably exploitable---and reaches it dynamically through the coupling of
-recruitment to movement, which an ablation confirms is essential. The reinforcement learning sits at the level
-of the \emph{problem} solved and the \emph{allocation reached}, not the micro-rule: no step evaluates reward,
-and the swarm settles into the allocation without \emph{learning} it. Against trained PPO learners in the same
-embodied environment---under sensing primitives matched so neither arm can approach resources it cannot
-sense---the reward-free swarm is competitive at zero training. Its harvest is statistically \emph{equivalent} to
-the best learner's in clustered, resource-rich fields (within a $\pm0.02$ margin of the oracle ceiling, by a
-two-one-sided-test), and it matches the ideal-free allocation gradient most faithfully of the arms tested in both
-fields (slope ${\approx}1$, unbiased), including the scarce one where the learner collects more total intake. Learning buys precision (a tighter per-capita intake), not a better match to the gradient. In the
-clustered regime neither learned message passing over the same network nor a centralized-critic (CTDE) learner
-beats it. We read this not as beating RL
-but as a demonstration that the self-organizing physics of a minimal swarm can carry a collective to the
-optimum RL seeks, with none of RL's machinery. A companion paper develops the mechanism and the
-harvesting-efficiency side of foraging.
+foraging swarm \emph{approaches} this optimum's allocation---the ideal-free / Nash equilibrium of a multi-agent
+resource-sharing game (an equilibrium allocation, not a return maximum)---with no learner, no trained
+parameters, and no reward signal in its dynamics. The reinforcement learning is at the level of the
+\emph{problem} solved and the \emph{allocation reached}, not the micro-rule. Agents explore by heavy-tailed
+(L\'evy) flights, recruit neighbours to a discovery through a threshold cascade on their proximity network, and
+disperse as a patch crowds; an ablation shows this coupling of recruitment to movement is what drives foragers
+into proportion to resource richness. The swarm reaches the allocation rather than learning it, and attains the
+\emph{shape} of the optimum but not its exact equilibrium---it stays measurably exploitable (Nash-gap $0.58$,
+versus ${\approx}0$ for a converged learner). Against PPO learners trained in the same sensing-limited
+environment, the reward-free swarm is competitive at zero training: its harvest ties the best learner where
+resource is clustered and plentiful (both ${\approx}0.80$ of a validated oracle ceiling) and trails only where
+resource is scarce, while it matches the ideal-free allocation gradient more faithfully than any
+learner---learning buys precision, not a better allocation. Neither learned message passing nor a centralized
+critic overturns this. We read it not as beating RL, but as evidence that a minimal swarm's self-organizing
+physics reaches the optimum RL seeks with none of RL's machinery. A companion paper develops the mechanism.
 \end{abstract}
 
 % =====================================================================
@@ -346,8 +353,10 @@ the shape it reaches.
   \centering
   \includegraphics[width=\linewidth]{fig_ifd.pdf}
   \caption{\textbf{The swarm reaches the optimal allocation, and the coupling causes it.} Committed foragers per
-  patch vs.\ richness, pooled over $B{=}64$ independent replica worlds ($n{=}591$ patch-replica points).
-  \textbf{(a) Recruiting.} Pooled slope $0.94$ ($R^2{=}0.67$; per-replica mean slope ${\approx}1.0$); dashed is
+  patch vs.\ richness, pooled over $B{=}64$ independent replica worlds ($n{=}591$ patch-replica points; the
+  $B{=}64$ worlds are the independent units).
+  \textbf{(a) Recruiting.} Pooled slope $0.94$ ($R^2{=}0.67$; the per-replica slope distribution has mean
+  ${\approx}1.0$, so the pooled fit is not an artefact of pooling non-independent points); dashed is
   the ideal slope $1$, the small shortfall the ``undermatching'' real foragers show. \textbf{(b) Coupling off.} With
   recruitment removed, matching is destroyed (slope $0.08$): the optimal (ideal-free) allocation is caused by
   the recruitment--movement coupling.}
@@ -566,10 +575,13 @@ learner outright---$0.80$ of the ceiling at zero training versus MLP-IPPO's $0.8
 merely non-significant ($p=0.55$, Welch's $t$ over $16$ seeds); the two are \emph{statistically equivalent} by a
 two-one-sided-test: the $90\%$ CI of the difference, $[-0.004,+0.008]$, lies entirely within a $\pm0.02$
 equivalence margin ($p<0.001$), so this is positive evidence of parity, not absence of evidence (random $0.32$).
-It does so against the
-whole learner field: the centralized-critic steelman reaches only $0.76$ (swarm ahead by $0.045$, $p\approx
-4\times10^{-12}$) and the communicating graph policy $0.75$. In the scarce field the trained learner collects
-\emph{more} total intake ($0.33$ versus the swarm's $0.22$, $p\approx3\times10^{-23}$; random $0.14$): where
+We set the $\pm0.02$ tolerance a priori at ${\approx}2\times$ the largest per-seed $95\%$ CI
+($\lesssim0.01$; App.~\ref{app:embodied}) and $2.5\%$ of the oracle ceiling; because the difference's own CI
+spans only $[-0.004,+0.008]$, the equivalence also holds under a margin half that size, so it is not an artefact
+of the chosen tolerance. It does so against the
+whole learner field: the centralized-critic steelman reaches only $0.76$ (swarm ahead by $0.045$, $p<0.001$,
+Welch's $t$ over $16$ seeds) and the communicating graph policy $0.75$. In the scarce field the trained learner collects
+\emph{more} total intake ($0.33$ versus the swarm's $0.22$, $p<0.001$; random $0.14$): where
 resource is hard to find, reading reward and training a policy buys raw harvest the reward-free mechanism does
 not---though the swarm still clears random by $59\%$ ($0.224$ vs $0.141$). The swarm is thus competitive everywhere, statistically
 ties the best learner in the clustered regime, and is not out-harvested by the centralized-critic steelman
@@ -592,7 +604,8 @@ ${\approx}1$) yet scatter around it from patch to patch, and the recruitment cas
 produces exactly that scatter, whereas a trained policy trades a little gradient bias for lower per-capita
 variance. The honest reading is therefore a bias--variance split: \emph{the reward-free mechanism reaches the
 correct allocation shape---the ideal-free optimum of the stated problem---at zero training and with no reward,
-more faithfully than any learner; learning buys precision, not a better match to the gradient}.
+more faithfully than any learner tested (whose reward shaping and entropy bonus, both spreading pressures, are
+held fixed rather than ablated; App.~\ref{app:embodied}); learning buys precision, not a better match to the gradient}.
 
 \paragraph{Neither communication nor a centralized critic rescues the learner.} Two obvious objections are that
 a feedforward learner, acting on its own observation, cannot represent the within-step coordination the cascade
@@ -881,6 +894,27 @@ headings; (3) choose each agent's move (swarm rule, or learned policy); (4) appl
 the agents' positions and the proximity graph---stored nowhere else---\emph{is} the swarm's allocation at that
 step.
 
+\paragraph{Dimensionless form.} Every raw scale above enters the dynamics only through dimensionless
+combinations, so the model is governed by seven dimensionless controls---the axes of the robustness sweep
+(App.~\ref{app:robust}). Three are the swarm's \emph{own} controls, held at task-independent defaults
+($\rho_r,\phi,\alpha$); three are properties of the resource \emph{field}
+($\rho_s,\rho_{\mathrm{patch}},\beta$); and the relay factor $\gamma$ is fixed at $1$ (no per-hop decay)
+throughout this paper.
+\begin{center}{\small
+\begin{tabular}{@{}llcc@{}}
+\hline
+control & meaning & operating value & swept range \\
+\hline
+$\rho_r=N(r/L)^2$ & connectivity (mean degree) & $2.1$ & $[1.0,5.0]$ \\
+$\phi$ & activation threshold ($a/k\ge\phi$) & $0.18$ & $[0.05,0.35]$ \\
+$\alpha$ & L\'evy exponent & $1.0$ & $[0.6,2.0]$ \\
+$\beta$ & Pareto patch-richness exponent & $2.2$ & $[1.5,3.5]$ \\
+$\rho_s=M(S/L)^2$ & resource coverage & $0.02$--$0.08$ & $[0.005,0.08]$ \\
+$\rho_{\mathrm{patch}}$ & resource patchiness (clump radius$/L$) & $0.0375$ & $[0.02,0.30]$ \\
+$\gamma$ & relay decay (per hop) & $1.0$ & $[0.1,1.0]$ \\
+\hline
+\end{tabular}}\end{center}
+
 \section{The optimal allocation: ideal free distribution and habitat-game Nash}
 \label{app:optimum}
 With resource $Q_i$ shared among the $N n_i$ foragers on patch $i$, per-capita intake is $f_i=Q_i/(N n_i)$.
@@ -996,6 +1030,15 @@ Hyperparameters (shared): learning rate $3\times10^{-4}$, hidden width $64$, rol
 clip $0.2$, $\gamma=0.99$, $\lambda=0.95$, value coefficient $0.5$, entropy $0.01$, gradient-norm clip $0.5$,
 Adam.
 
+\paragraph{What is held fixed in the learners.} The shaped reward's resource-proximity term and the entropy
+bonus ($0.01$) both push a policy to \emph{spread}, and we hold both fixed rather than ablating them (the
+capacity/learning-rate sweep below likewise does not vary them). The learners' systematic under-concentration
+(slope $0.69$--$0.91$) is therefore reported \emph{under this standard reward shaping}, and some of it may reflect
+these spreading pressures rather than an intrinsic limit of trained RL. The swarm's own gradient-unbiasedness
+(slope ${\approx}1$) has no reward to shape and does not depend on this, so the comparison we draw is the
+one-sided one---the reward-free swarm is at least as gradient-faithful as these learners as configured---not that
+trained RL is intrinsically biased. Ablating the shaping and entropy is left to future work.
+
 \paragraph{Efficient GPU implementation.} The whole environment is a batched GPU (PyTorch) port of the NumPy
 environment; every independent unit---$16$ seeds $\times$ $2$ operating points $\times$ learner family---is
 folded into a leading ensemble dimension with grouped, per-policy weights, so the full comparison runs as one
@@ -1027,7 +1070,7 @@ fair while the training signal is the strongest a fair actor can be given). Frac
 In the clustered field the reward-free swarm's harvest is statistically \emph{equivalent} to the best trained
 learner's ($0.80$ vs MLP-IPPO's $0.80$; a two-one-sided-test rejects a difference beyond $\pm0.02$ at $p<0.001$,
 $90\%$ CI of the difference $[-0.004,+0.008]$, $16$ seeds) and is not out-harvested by the MAPPO steelman
-($0.76$); in the scarce field the learner harvests more ($0.33$ vs $0.22$, $p\approx3\times10^{-23}$). The
+($0.76$); in the scarce field the learner harvests more ($0.33$ vs $0.22$, $p<0.001$, $16$ seeds). The
 allocation result is a bias--variance split. On the allocation \emph{shape} (ideal-free matching slope) the swarm
 is the most faithful arm in both fields (slope ${\approx}1$ vs the learners' $0.69$--$0.91$): it is unbiased with
 respect to the resource gradient while the learners under-concentrate. On allocation \emph{precision}
@@ -1090,7 +1133,7 @@ nor a centralized critic changes that.
 \label{app:robust}
 To check that the near-ideal allocation is not an artefact of the single operating point, we ran a
 low-discrepancy (Sobol) sweep of $1024$ points over the seven dimensionless controls of the proper multi-hop
-model---connectivity $\rho_r$, activation threshold $\phi$, L\'evy exponent $\alpha$, clump clustering, resource
+model---connectivity $\rho_r$, activation threshold $\phi$, L\'evy exponent $\alpha$, patch-richness heterogeneity $\beta$, resource
 coverage $\rho_s$, resource patchiness, and the relay decay---each point evaluated over $B{=}64$ independent
 replica worlds, scoring the ideal-free matching slope and the fraction of the oracle ceiling. Because the box is
 wide, most random points fall in poor regimes; the question is whether the operating point sits on a broad,
@@ -1118,7 +1161,11 @@ one control the gradient match genuinely depends on is the resource \emph{patchi
 environment, not of the swarm: when clumps are tightly concentrated (as in the operating fields) matching is
 near-ideal, and it degrades as the field spreads out. This locates the scope of the result honestly: the swarm
 reaches the ideal-free allocation when resource is clustered, which is the common ecological case the paper
-targets, and not when it is diffuse. (The sweep holds the agent count $N{=}200$ fixed; scaling in $N$ is a
+targets, and not when it is diffuse. This sweep varies the swarm's \emph{own} allocation slope across the
+patchiness axis; the head-to-head swarm-vs-learner \emph{harvest} contest (\S\ref{sec:compare}) is measured at the
+two field endpoints---clustered and scarce---and is not swept across intermediate patchiness, which is why we say
+it \emph{bounds} rather than settles the general comparison; a full harvest sweep against trained learners over
+the patchiness axis is left to future work. (The sweep holds the agent count $N{=}200$ fixed; scaling in $N$ is a
 separate axis we do not vary here.)
 
 \end{document}
