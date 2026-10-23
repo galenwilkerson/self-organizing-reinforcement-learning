@@ -37,13 +37,17 @@ from __future__ import annotations
 import os, sys, time
 import numpy as np
 
-CODE = "/home/galen/Dropbox_2025/Dropbox/projects/flocking_LTM/Code"
+_HERE = os.path.dirname(os.path.abspath(__file__))
+CODE = os.path.normpath(os.path.join(_HERE, "..", "code"))
+if not os.path.isdir(CODE):
+    CODE = "/home/galen/Dropbox_2025/Dropbox/projects/flocking_LTM/Code"
 sys.path.insert(0, CODE)
 import torch  # noqa: E402
 from mobile_cascade import MobileCascade, MobileCascadeConfig  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-DATA = "/mnt/newssd/flocking_ltm_data/paper2_bridge"
+_RD = os.path.normpath(os.path.join(HERE, "..", "data", "paper2_bridge"))
+DATA = _RD if os.path.isdir(_RD) else "/mnt/newssd/flocking_ltm_data/paper2_bridge"
 os.makedirs(DATA, exist_ok=True)
 
 B = int(sys.argv[1]) if len(sys.argv) > 1 else 64

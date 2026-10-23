@@ -16,5 +16,8 @@ figures/_unused/
 
 # Large simulation data lives off-repo (regenerate via figures/gen_*.py; caches on local SSD)
 *.npz
+# ...but the small bundled reproduction caches under data/ ARE tracked, so a fresh
+# clone can regenerate every figure without a GPU or any external download.
+!data/**/*.npz
 __pycache__/
 *.pyc

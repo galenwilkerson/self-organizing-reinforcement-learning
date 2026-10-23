@@ -21,7 +21,8 @@ plt.rcParams.update({"font.size": 13, "axes.titlesize": 13, "axes.labelsize": 13
                      "xtick.labelsize": 12, "ytick.labelsize": 12, "legend.fontsize": 11.5})
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-DATA = "/mnt/newssd/flocking_ltm_data/paper2_convergence"
+_RD = os.path.normpath(os.path.join(HERE, "..", "data", "paper2_convergence"))
+DATA = _RD if os.path.isdir(_RD) else "/mnt/newssd/flocking_ltm_data/paper2_convergence"
 CACHE = os.path.join(DATA, "convergence_B64_T800_seed0.npz")
 TAIL_START = 400          # tail-average window start (ticks); matches ifd_test.py T//2 with T=800
 

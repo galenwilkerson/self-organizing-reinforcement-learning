@@ -35,9 +35,12 @@ import os, sys, time
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-DATA = "/mnt/newssd/flocking_ltm_data/paper2_marl"
+_RD = os.path.normpath(os.path.join(HERE, "..", "data", "paper2_marl"))
+DATA = _RD if os.path.isdir(_RD) else "/mnt/newssd/flocking_ltm_data/paper2_marl"
 os.makedirs(DATA, exist_ok=True)
-BRIDGE_CACHE = "/mnt/newssd/flocking_ltm_data/paper2_bridge/bridge_B64_T800_seed0.npz"
+_RB = os.path.normpath(os.path.join(HERE, "..", "data", "paper2_bridge"))
+BRIDGE_CACHE = (os.path.join(_RB, "bridge_B64_T800_seed0.npz") if os.path.isdir(_RB)
+                else "/mnt/newssd/flocking_ltm_data/paper2_bridge/bridge_B64_T800_seed0.npz")
 
 N = 200
 K = 10
@@ -328,7 +331,7 @@ def make_figures(res):
     ax[1].set_ylabel("Nash-gap / exploitability")
     ax[1].set_title("(b) optimality: distance from Nash", loc="left", fontsize=11.5, fontweight="bold")
     ax[1].legend(loc="upper right", frameon=False)
-    fig.suptitle("Regime 1 — congestion game (optimum = ideal free distribution)", fontsize=12.5)
+    fig.suptitle("Congestion game (optimum = ideal free distribution)", fontsize=12.5)
     fig.tight_layout(rect=(0, 0, 1, 0.96))
     for ext in ("pdf", "png"):
         p = os.path.join(HERE, f"fig_marl_compare.{ext}")
@@ -361,19 +364,20 @@ def make_figures(res):
         ax2.bar(xpos + (j - 0.5) * w, vals, w,
                 yerr=[vals - lo, hi - vals], capsize=3,
                 color=(col1 if regime == 1 else col2),
-                label=("Regime 1: congestion (opt = IFD / spread)" if regime == 1
-                       else "Regime 2: fixed reward (opt = concentrate)"))
+                label=("congestion (opt = IFD / spread)" if regime == 1
+                       else "non-congestion: fixed reward (opt = concentrate)"))
     ax2.set_xticks(xpos); ax2.set_xticklabels(labels)
     ax2.set_ylabel("closeness to regime optimum\n(1 $-$ total-variation distance)")
     ax2.set_ylim(0, 1.05)
     ax2.axhline(1.0, color="k", lw=0.8, ls=":")
     ax2.set_title("Learning buys generality: the swarm is optimal only for its matched (congestion) structure",
                   fontsize=10.8)
-    ax2.legend(loc="lower left", frameon=False, fontsize=9.5)
+    ax2.legend(loc="upper center", bbox_to_anchor=(0.5, -0.22), ncol=2,
+               frameon=False, fontsize=9.5)
     fig2.tight_layout()
     for ext in ("pdf", "png"):
         p = os.path.join(HERE, f"fig_marl_regimes.{ext}")
-        fig2.savefig(p, dpi=200 if ext == "png" else None); print("wrote", p)
+        fig2.savefig(p, dpi=200 if ext == "png" else None, bbox_inches="tight"); print("wrote", p)
 
     # ---- numeric report ----
     print("\n================ MARL RESULTS ================")

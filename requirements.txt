@@ -1,4 +1,5 @@
-numpy
-torch
-matplotlib
-scipy
+# Tested with Python 3.10. Version floors below; the exact versions we ran are in comments.
+numpy>=1.24          # tested 1.26.4
+torch>=2.0           # tested 2.5.1 (CPU is enough to reproduce figures from bundled data/)
+matplotlib>=3.6      # tested 3.10
+scipy>=1.9           # tested 1.13

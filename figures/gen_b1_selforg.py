@@ -26,13 +26,17 @@ from __future__ import annotations
 import os, sys, time, math
 import numpy as np
 
-CODE = "/home/galen/Dropbox_2025/Dropbox/projects/flocking_LTM/Code"
+_HERE = os.path.dirname(os.path.abspath(__file__))
+CODE = os.path.normpath(os.path.join(_HERE, "..", "code"))
+if not os.path.isdir(CODE):
+    CODE = "/home/galen/Dropbox_2025/Dropbox/projects/flocking_LTM/Code"
 sys.path.insert(0, CODE)
 import torch  # noqa: E402
 from mobile_cascade import MobileCascade, MobileCascadeConfig  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-DATA = "/mnt/newssd/flocking_ltm_data/paper2_selforg"
+_RD = os.path.normpath(os.path.join(HERE, "..", "data", "paper2_selforg"))
+DATA = _RD if os.path.isdir(_RD) else "/mnt/newssd/flocking_ltm_data/paper2_selforg"
 os.makedirs(DATA, exist_ok=True)
 
 N = 200
@@ -193,7 +197,7 @@ def make_figure(zs_win, win, peak_z, rows):
     a2b.set_ylim(0, 1.15); a2b.tick_params(axis="y", labelcolor="#2ca02c")
     a2.set_title("(c) $\\sigma$ density-invariant & subcritical;\nmatching near-ideal (no tuning)", fontsize=10.2)
     a2.set_xscale("log")
-    fig.suptitle("Exp B1 — the cascade window (a); the mobile swarm self-regulates to a stable subcritical "
+    fig.suptitle("The cascade window (a); the mobile swarm self-regulates to a stable subcritical "
                  "operating regime across 60$\\times$ density (b,c)", fontsize=11)
     fig.tight_layout(rect=(0, 0, 1, 0.94))
     for ext in ("pdf", "png"):

@@ -23,13 +23,17 @@ from __future__ import annotations
 import os, sys, time
 import numpy as np
 
-CODE = "/home/galen/Dropbox_2025/Dropbox/projects/flocking_LTM/Code"
+_HERE = os.path.dirname(os.path.abspath(__file__))
+CODE = os.path.normpath(os.path.join(_HERE, "..", "code"))
+if not os.path.isdir(CODE):
+    CODE = "/home/galen/Dropbox_2025/Dropbox/projects/flocking_LTM/Code"
 sys.path.insert(0, CODE)
 import torch  # noqa: E402
 from mobile_cascade import MobileCascade, MobileCascadeConfig  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-DATA = "/mnt/newssd/flocking_ltm_data/paper2_discrim"
+_RD = os.path.normpath(os.path.join(HERE, "..", "data", "paper2_discrim"))
+DATA = _RD if os.path.isdir(_RD) else "/mnt/newssd/flocking_ltm_data/paper2_discrim"
 os.makedirs(DATA, exist_ok=True)
 N = 200
 
@@ -147,7 +151,7 @@ def make_figure(B, T, relocate_at, mf, lf, hf, mr, lr, hr, plateau, tte):
         ax.text(tte + 6, plateau - 0.08, f"plateau by\n~{tte} ticks", color="#2c7fb8", fontsize=9.5)
     ax.set_xlabel("time (ticks)")
     ax.set_ylabel("closeness to resource distribution\n(1 $-$ total variation, real patches)")
-    ax.set_title("Exp 3 — informativeness rises and PLATEAUS, and RE-TRACKS after relocation\n"
+    ax.set_title("Informativeness rises and plateaus, and re-tracks after relocation\n"
                  "(converged/homeostatic policy, not cumulative epistemic learning)", fontsize=10.6)
     ax.legend(loc="lower right", frameon=False)
     fig.tight_layout()
