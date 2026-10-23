@@ -31,8 +31,7 @@ than *learning* (see the paper for the precise, calibrated claims).
 
 **Run it live in your browser:**
 [**galenwilkerson.github.io/collective_foraging_demo_rl.html**](https://galenwilkerson.github.io/collective_foraging_demo_rl.html)
-— this paper's reward-free / learner-free swarm, no install. (The source is also bundled here in
-[`demos/collective_foraging_demo.html`](demos/collective_foraging_demo.html).)
+— this paper's reward-free / learner-free swarm, no install. (The demo is also included in this repo.)
 
 <a href="https://galenwilkerson.github.io/collective_foraging_demo_rl.html"><img src="demos/demo_swarm.png" width="420" alt="Swarm window of the live demo"></a>
 
