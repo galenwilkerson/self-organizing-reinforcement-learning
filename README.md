@@ -103,8 +103,8 @@ to a few minutes each):
 python3 gen_stronger_f1.py        # and so on for each script above
 ```
 
-(`fig_mechanism_tikz` and `fig_cycle_schematic_tikz` are drawn in TikZ and are produced by the LaTeX build,
-not by a Python script.)
+(`fig_mechanism_tikz` and `fig_cycle_schematic_tikz` are standalone TikZ documents, not Python scripts;
+compile either directly, e.g. `pdflatex figures/fig_mechanism_tikz.tex`.)
 
 The four scripts marked *"else re-simulates via `code/`"* are self-regenerating: if their bundled cache is
 present they load it; delete it (or run with `FORCE=1`) and they re-run the CPU simulation in `code/` to
