@@ -1,8 +1,25 @@
 cff-version: 1.2.0
-message: "If you use this code, please cite the paper."
+message: "If you use this code, please cite the paper below."
 title: "A learner-free, self-organizing swarm approaches reinforcement learning's explore–exploit optimum"
 authors:
   - family-names: Wilkerson
     given-names: Galen J.
+    affiliation: "Komplexity AI LLC"
 year: 2026
-url: "https://github.com/galenwilkerson/self-organizing-reinforcement-learning"
+repository-code: "https://github.com/galenwilkerson/self-organizing-reinforcement-learning"
+license: MIT
+preferred-citation:
+  type: article
+  title: "A learner-free, self-organizing swarm approaches reinforcement learning's explore–exploit optimum"
+  authors:
+    - family-names: Wilkerson
+      given-names: Galen J.
+      affiliation: "Komplexity AI LLC"
+  year: 2026
+  notes: "Preprint on arXiv; under review at TMLR."
+  # TODO: add this paper's arXiv identifier once to hand, e.g.
+  # url: "https://arxiv.org/abs/XXXX.XXXXX"
+  # identifiers:
+  #   - type: other
+  #     value: "arXiv:XXXX.XXXXX"
+  #     description: "arXiv preprint"

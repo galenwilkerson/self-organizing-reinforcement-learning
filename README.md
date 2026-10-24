@@ -1,7 +1,7 @@
 # A learner-free, self-organizing swarm approaches reinforcement learning's explore–exploit optimum
 
-Code and manuscript for the paper *"A learner-free, self-organizing swarm approaches reinforcement
-learning's explore–exploit optimum."*
+Code and data for the paper *"A learner-free, self-organizing swarm approaches reinforcement
+learning's explore–exploit optimum"* (the manuscript is on arXiv; this repository is code and data only).
 
 A minimal foraging swarm — Lévy exploration + a threshold recruitment cascade on the proximity graph +
 density-dependent dispersal — self-organizes to the ideal-free / Nash-equilibrium allocation of a multi-agent
@@ -44,8 +44,6 @@ This repository is **self-contained**: a fresh clone can regenerate every data-d
 without any external path or download.
 
 ```
-main.tex, refs.bib        manuscript source (TMLR format; anonymized for double-blind review)
-main.pdf                  compiled manuscript
 requirements.txt          Python dependencies (numpy, torch, matplotlib, scipy)
 figures/                  paper figures (*.pdf/*.png) + their self-contained generators gen_*.py
 code/                     bundled CPU simulation code
@@ -55,6 +53,7 @@ step3_gpu/                embodied swarm-vs-RL training + analysis code (GPU for
     torch_env.py, policies_batched.py
     train_gpu.py, train_long.py, train_mappo.py, train_robust.py
     analyze_step3_gpu.py
+    nscale/                 finite-size (N-scaling) self-similar sweep (train_nscale.py, plot_nscale.py)
 data/                     small bundled caches the figure scripts read (so figures reproduce with no GPU)
     step3_gpu/              step3_gpu_long.npz, step3_gpu_mappo.npz   (IPPO/GNN + MAPPO eval results)
     dimensionless_sweep/    sweep_v1.npz                              (1024-pt Sobol robustness sweep)
@@ -135,6 +134,26 @@ rebuild it. All of this is CPU-only.
 
 The underlying self-organized-critical mechanism (the cascade window; movement-neutral recruitment) is
 developed in a companion paper (Part I).
+
+## How to cite
+
+If you use this code, please cite the paper (preprint on arXiv; under review at TMLR):
+
+> Galen J. Wilkerson. *A learner-free, self-organizing swarm approaches reinforcement learning's explore–exploit optimum.* arXiv preprint, 2026.
+
+```bibtex
+@article{wilkerson2026learnerfree,
+  title         = {A learner-free, self-organizing swarm approaches reinforcement learning's explore--exploit optimum},
+  author        = {Wilkerson, Galen J.},
+  year          = {2026},
+  eprint        = {XXXX.XXXXX},   % <-- fill in this paper's arXiv ID
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.MA}
+}
+```
+
+See also the companion (Part I): Wilkerson, *A general mechanism for collective foraging*, arXiv:2610.25113.
+GitHub also shows a "Cite this repository" button generated from `CITATION.cff`.
 
 ## License
 
