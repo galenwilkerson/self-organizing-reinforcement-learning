@@ -99,7 +99,7 @@ physics reaches the optimum RL seeks with none of RL's machinery. A companion pa
 
 \begin{figure}[t]\centering
   \includegraphics[width=0.86\linewidth]{fig_mechanism_tikz.pdf}
-  \caption{\textbf{The physical model.} Agents explore by L\'evy flights (left). An agent that lands on a
+  \caption{\textbf{The physical model.} Agents explore by L\'evy flights (right). An agent that lands on a
   resource---a \emph{seed}---triggers a recruitment cascade along the proximity network, drawing neighbours
   into local convergence on the find; as the neighbourhood crowds, degree-normalized activation $a/k$ falls
   below threshold $\phi$ and further recruitment is \emph{blocked} (red). Schematic of the model described in
@@ -304,7 +304,7 @@ coordinate (a stated feature of the model here; analysed in~\citep{partI}).
   \caption{\textbf{The self-organizing cycle balances exploration and exploitation.} In the plane of
   network/spatial density (horizontal) and node activity (vertical), the swarm runs a drive--avalanche cycle:
   discovery seeds a recruitment cascade (explore$\to$recruit$\to$exploit); crowding blocks and disperses it
-  (exploit$\to$released$\to$explore); aggregation (\emph{drive}) versus dispersal (\emph{dissipation}) hold the
+  (exploit$\to$blocked$\to$explore); aggregation (\emph{drive}) versus dispersal (\emph{dissipation}) hold the
   swarm in a poised window, with no parameter tuned. Schematic of the self-organizing cycle described in
   \S\ref{sec:mech}; full treatment in~\citep{partI}.}
   \label{fig:cycle}
