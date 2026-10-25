@@ -30,15 +30,29 @@ DATA_DIR = _RD if os.path.isdir(_RD) else "/mnt/newssd/flocking_ltm_data/step3_g
 LONG = np.load(os.path.join(DATA_DIR, "step3_gpu_long.npz"), allow_pickle=True)["res"].item()
 MAPPO = np.load(os.path.join(DATA_DIR, "step3_gpu_mappo.npz"), allow_pickle=True)["res"].item()
 NSEED = LONG["_meta"]["nseed"]
+
+# GNN L=1 HARVEST re-run at matched parallel-environment count (R=24, 24 seeds); see
+# step3_gpu/GNN_DONE_RIGHT_DESIGN.md. Override ONLY the L=1 harvest finals for panel (a);
+# slope (b) and exploitability (c) keep the original R=10 campaign (gnn_L1_slope / _rich / _occ
+# are not re-saved by the rerun).
+_NEW = os.path.join(DATA_DIR, "step3_gpu_gnn_right.npz")
+if os.path.exists(_NEW):
+    _nr = np.load(_NEW, allow_pickle=True)["res"].item()
+    for _op in ("PAPER", "FAVORABLE"):
+        LONG[_op]["gnn_L1_finals"] = np.asarray(_nr[_op]["gnn_L1_finals"], float)
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 POINTS = ["PAPER", "FAVORABLE"]
 PRETTY = {"PAPER": "scarce", "FAVORABLE": "clustered,\nresource-rich"}
 
 
 def per_seed(arr):
-    """Collapse replicas within each seed -> (nseed,) per-seed means."""
-    a = np.asarray(arr, float).reshape(NSEED, -1)
-    return a.mean(axis=1)
+    """Collapse replicas within each seed -> (nseed,) per-seed means. Arrays that are already
+    one-value-per-seed (e.g. the matched-environment GNN rerun, 24 seeds) pass through unchanged."""
+    a = np.asarray(arr, float).ravel()
+    if a.size % NSEED == 0:
+        return a.reshape(NSEED, -1).mean(axis=1)
+    return a
 
 
 def ci(arr):

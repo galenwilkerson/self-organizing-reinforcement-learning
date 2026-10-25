@@ -51,11 +51,12 @@ code/                     bundled CPU simulation code
     batched_swarm.py        batched swarm primitives (mobile_cascade imports select_device from here)
 step3_gpu/                embodied swarm-vs-RL training + analysis code (GPU for training, CPU for analysis)
     torch_env.py, policies_batched.py
-    train_gpu.py, train_long.py, train_mappo.py, train_robust.py
+    train_gpu.py, train_long.py, train_mappo.py, train_robust.py, train_gnn_right.py
     analyze_step3_gpu.py
+    GNN_DONE_RIGHT_DESIGN.md  pre-registration + design of the matched-environment GNN rerun
     nscale/                 finite-size (N-scaling) self-similar sweep (train_nscale.py, plot_nscale.py)
 data/                     small bundled caches the figure scripts read (so figures reproduce with no GPU)
-    step3_gpu/              step3_gpu_long.npz, step3_gpu_mappo.npz   (IPPO/GNN + MAPPO eval results)
+    step3_gpu/              step3_gpu_long.npz, step3_gpu_mappo.npz, step3_gpu_gnn_right.npz   (IPPO/GNN + MAPPO eval results; gnn_right = matched-environment L=1 GNN rerun)
     dimensionless_sweep/    sweep_v1.npz                              (1024-pt Sobol robustness sweep)
     paper2_convergence/     convergence_B64_T800_seed0.npz           (per-tick occupancy cache)
     paper2_bridge/          bridge_B64_T800_seed0.npz                (recruitment inflow/release cache)
@@ -114,13 +115,18 @@ rebuild it. All of this is CPU-only.
 
 - **CPU caches** (`paper2_*`, `dimensionless_sweep`): produced by the self-regenerating figure scripts above
   (`FORCE=1 python3 gen_<name>.py`), or by the drivers under the corresponding experiment directories.
-- **GPU training caches** (`data/step3_gpu/step3_gpu_long.npz`, `step3_gpu_mappo.npz`): produced by the
-  training scripts in `step3_gpu/` and **require a GPU** (the embodied IPPO / GNN / MAPPO learners):
+- **GPU training caches** (`data/step3_gpu/step3_gpu_long.npz`, `step3_gpu_mappo.npz`,
+  `step3_gpu_gnn_right.npz`): produced by the training scripts in `step3_gpu/` and **require a GPU**
+  (the embodied IPPO / GNN / MAPPO learners):
 
   ```
   cd step3_gpu
   python3 train_long.py        # IPPO + GNN embodied learners -> step3_gpu_long.npz
   python3 train_mappo.py       # centralized-critic MAPPO steelman -> step3_gpu_mappo.npz
+  # matched-environment L=1 GNN rerun (R=24 parallel environments, 24 seeds; see
+  # GNN_DONE_RIGHT_DESIGN.md) -> step3_gpu_gnn_right.npz:
+  python3 train_gnn_right.py --mode full --R_gnn 24 --R_mlp 24 --nseed 24 --seed_chunk 12 \
+          --ticks 150000 --lr 3e-4 --out step3_gpu_gnn_right.npz
   # analysis / headline (CPU):
   python3 analyze_step3_gpu.py
   ```
