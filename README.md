@@ -1,7 +1,7 @@
-# A learner-free, self-organizing swarm approaches reinforcement learning's explore–exploit optimum
+# A learner-free swarm approximates the explore–exploit equilibrium allocation
 
-Code and data for the paper *"A learner-free, self-organizing swarm approaches reinforcement
-learning's explore–exploit optimum"* (the manuscript is on arXiv; this repository is code and data only).
+Code and data for the paper *"A learner-free swarm approximates the explore–exploit equilibrium
+allocation"* (the manuscript is on arXiv, arXiv:2610.25113; this repository is code and data only).
 
 A minimal foraging swarm — Lévy exploration + a threshold recruitment cascade on the proximity graph +
 density-dependent dispersal — self-organizes to the ideal-free / Nash-equilibrium allocation of a multi-agent
@@ -50,13 +50,14 @@ code/                     bundled CPU simulation code
     mobile_cascade.py       the mobile recruitment-cascade foraging model
     batched_swarm.py        batched swarm primitives (mobile_cascade imports select_device from here)
 step3_gpu/                embodied swarm-vs-RL training + analysis code (GPU for training, CPU for analysis)
-    torch_env.py, policies_batched.py
+    torch_env.py, policies_batched.py   (policies_batched.py includes EnsembleGRU, the recurrent learner)
     train_gpu.py, train_long.py, train_mappo.py, train_robust.py, train_gnn_right.py
+    train_recurrent.py        recurrent GRU-IPPO learner (learnable memory) -> gru_recurrent.npz
     analyze_step3_gpu.py
     GNN_DONE_RIGHT_DESIGN.md  pre-registration + design of the matched-environment GNN rerun
     nscale/                 finite-size (N-scaling) self-similar sweep (train_nscale.py, plot_nscale.py)
 data/                     small bundled caches the figure scripts read (so figures reproduce with no GPU)
-    step3_gpu/              step3_gpu_long.npz, step3_gpu_mappo.npz, step3_gpu_gnn_right.npz   (IPPO/GNN + MAPPO eval results; gnn_right = matched-environment L=1 GNN rerun)
+    step3_gpu/              step3_gpu_long.npz, step3_gpu_mappo.npz, step3_gpu_gnn_right.npz, gru_recurrent.npz, step3_jmlr_ablation.npz   (IPPO/GNN + MAPPO eval; gnn_right = matched-env L=1 GNN rerun; gru_recurrent = recurrent GRU-IPPO; step3_jmlr_ablation = reward-shaping/entropy ablation of MLP-IPPO)
     dimensionless_sweep/    sweep_v1.npz                              (1024-pt Sobol robustness sweep)
     paper2_convergence/     convergence_B64_T800_seed0.npz           (per-tick occupancy cache)
     paper2_bridge/          bridge_B64_T800_seed0.npz                (recruitment inflow/release cache)
@@ -127,6 +128,8 @@ rebuild it. All of this is CPU-only.
   # GNN_DONE_RIGHT_DESIGN.md) -> step3_gpu_gnn_right.npz:
   python3 train_gnn_right.py --mode full --R_gnn 24 --R_mlp 24 --nseed 24 --seed_chunk 12 \
           --ticks 150000 --lr 3e-4 --out step3_gpu_gnn_right.npz
+  # recurrent GRU-IPPO learner (learnable memory; 16 seeds x {scarce,clustered} x 150k) -> gru_recurrent.npz:
+  python3 train_recurrent.py full --ticks 150000 --nseed 16 --out gru_recurrent.npz
   # analysis / headline (CPU):
   python3 analyze_step3_gpu.py
   ```
@@ -136,6 +139,13 @@ rebuild it. All of this is CPU-only.
   `fig_stronger` and `fig_learning_curves` consume — both are already bundled under `data/step3_gpu/`, so a GPU
   is **not** needed just to reproduce the figures.
 
+- **Reward-shaping / entropy ablation** of MLP-IPPO (bundled result `data/step3_gpu/step3_jmlr_ablation.npz`):
+  four cells, shape ∈ {0.05, 0} × entropy ∈ {0.01, 0}, 16 seeds × both fields × 150k steps, produced by
+  retraining the feedforward learner with the shaping and/or entropy coefficients zeroed. The bundled npz holds
+  the per-cell harvest, IFD slope, and exploitability reported in the paper's appendix (the under-concentration
+  persists without shaping, so it is not a shaping artefact). The recurrent learner is produced by
+  `train_recurrent.py` above (`gru_recurrent.npz`).
+
 ## Companion paper
 
 The underlying self-organized-critical mechanism (the cascade window; movement-neutral recruitment) is
@@ -143,22 +153,22 @@ developed in a companion paper (Part I).
 
 ## How to cite
 
-If you use this code, please cite the paper (preprint on arXiv; under review at TMLR):
+If you use this code, please cite the paper (preprint on arXiv):
 
-> Galen J. Wilkerson. *A learner-free, self-organizing swarm approaches reinforcement learning's explore–exploit optimum.* arXiv preprint, 2026.
+> Galen J. Wilkerson. *A learner-free swarm approximates the explore–exploit equilibrium allocation.* arXiv preprint arXiv:2610.25113, 2026.
 
 ```bibtex
 @article{wilkerson2026learnerfree,
-  title         = {A learner-free, self-organizing swarm approaches reinforcement learning's explore--exploit optimum},
+  title         = {A learner-free swarm approximates the explore--exploit equilibrium allocation},
   author        = {Wilkerson, Galen J.},
   year          = {2026},
-  eprint        = {XXXX.XXXXX},   % <-- fill in this paper's arXiv ID
+  eprint        = {2610.25113},
   archivePrefix = {arXiv},
   primaryClass  = {cs.MA}
 }
 ```
 
-See also the companion (Part I): Wilkerson, *A general mechanism for collective foraging*, arXiv:2610.25113.
+See also the companion (Part I): Wilkerson, *A general mechanism for collective foraging*, arXiv:2610.24865.
 GitHub also shows a "Cite this repository" button generated from `CITATION.cff`.
 
 ## License

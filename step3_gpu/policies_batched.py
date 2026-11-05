@@ -63,3 +63,34 @@ class EnsembleGNN(nn.Module):
         logits = self.ao(hx).reshape(M, U, N, -1)
         val = self.co(hx).squeeze(-1).reshape(M, U, N)
         return logits, val
+
+
+class EnsembleGRU(nn.Module):
+    """Per-agent RECURRENT actor+critic, M independent copies (learnable memory, grouped GRU cell + heads).
+    Single-step: forward_step(x (M,B,F), h (M,B,H)) -> logits (M,B,n_act), val (M,B), h' (M,B,H).
+    B = (worlds x agents) flattened. Hidden is carried across environment ticks by the caller; truncated
+    BPTT is done by re-running the stored feature sequence from a detached start hidden in the update."""
+    def __init__(self, M, F, h=64, n_act=3):
+        super().__init__()
+        self.H = h
+        self.enc = GroupedLinear(M, F, h)
+        self.x2h = GroupedLinear(M, h, 3 * h)   # gates from encoded input
+        self.h2h = GroupedLinear(M, h, 3 * h)   # gates from previous hidden
+        self.ao = GroupedLinear(M, h, n_act)
+        self.co = GroupedLinear(M, h, 1)
+
+    def init_hidden(self, M, B, device):
+        return torch.zeros(M, B, self.H, device=device)
+
+    def forward_step(self, x, h):               # x (M,B,F), h (M,B,H)
+        e = torch.relu(self.enc(x))             # (M,B,H)
+        gx = self.x2h(e); gh = self.h2h(h)      # (M,B,3H)
+        xr, xz, xn = gx.chunk(3, dim=-1)
+        hr, hz, hn = gh.chunk(3, dim=-1)
+        r = torch.sigmoid(xr + hr)
+        z = torch.sigmoid(xz + hz)
+        n = torch.tanh(xn + r * hn)
+        h2 = (1.0 - z) * n + z * h
+        logits = self.ao(h2)
+        val = self.co(h2).squeeze(-1)
+        return logits, val, h2
