@@ -10,7 +10,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>A learner-free, self-organizing swarm approaches reinforcement learning's explore–exploit optimum</title>
+<title>A learner-free swarm approximates the explore–exploit equilibrium allocation</title>
 <style>
   :root{ --grey:#7d7d82; --blue:#1250f0; --green:#16c74a; --red:#e41616; --ink:#222; }
   body{ font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; color:var(--ink);
@@ -54,7 +54,7 @@
 <body>
   <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:0 0 8px">
     <h1 style="margin:0">Self-organizing reinforcement learning</h1>
-    <span style="font-size:16px;color:#444;font-weight:600">a swarm approaches the explore–exploit optimum — no learner, no reward signal</span>
+    <span style="font-size:16px;color:#444;font-weight:600">a learner-free swarm approximates the explore–exploit equilibrium allocation — no learner, no reward signal</span>
   </div>
   <p class="sub">A threshold <b>contagion</b> (Watts/Granovetter LTM) embedded in space: a discovery
   <b>recruits</b> neighbours through a cascade on the proximity graph; <b>fraction-normalised</b> activation
@@ -69,10 +69,10 @@
 
   <div class="paperbox">
     <div class="paperbox-t">From the paper — vs. a trained RL learner <small>(result summary, not the live sim below)</small></div>
-    <p>Against a trained PPO learner in the same sensing-limited environment, the reward-free swarm (zero training)
+    <p>Against trained PPO/MAPPO/GNN/GRU learners in the same sensing-limited environment, the reward-free swarm (zero training)
     ties the best learner's harvest where resource is clustered and plentiful (<b>0.80 vs 0.80</b> of a validated
     oracle ceiling) and trails only where resource is scarce (<b>0.22 vs 0.33</b>); it matches the ideal-free
-    allocation gradient more faithfully than any learner (slope <b>~1 vs 0.69–0.91</b>). Learning buys precision
+    allocation gradient more faithfully than any learner (slope <b>~1 vs 0.69–0.97</b>). Learning buys precision
     (tighter per-capita intake), not a better allocation.</p>
   </div>
 

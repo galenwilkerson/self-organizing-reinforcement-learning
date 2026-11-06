@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this code, please cite the paper below."
-title: "A learner-free swarm approximates the explore–exploit equilibrium allocation"
+title: "A learner-free swarm approximates the explore–exploit equilibrium allocation: A self-organized attractor in place of reinforcement-learning machinery"
 authors:
   - family-names: Wilkerson
     given-names: Galen J.
@@ -10,7 +10,7 @@ repository-code: "https://github.com/galenwilkerson/self-organizing-reinforcemen
 license: MIT
 preferred-citation:
   type: article
-  title: "A learner-free swarm approximates the explore–exploit equilibrium allocation"
+  title: "A learner-free swarm approximates the explore–exploit equilibrium allocation: A self-organized attractor in place of reinforcement-learning machinery"
   authors:
     - family-names: Wilkerson
       given-names: Galen J.

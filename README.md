@@ -1,7 +1,10 @@
 # A learner-free swarm approximates the explore–exploit equilibrium allocation
 
+*A self-organized attractor in place of reinforcement-learning machinery*
+
 Code and data for the paper *"A learner-free swarm approximates the explore–exploit equilibrium
-allocation"* (the manuscript is on arXiv, arXiv:2610.25113; this repository is code and data only).
+allocation: A self-organized attractor in place of reinforcement-learning machinery"* (the manuscript is on
+arXiv, arXiv:2610.25113; this repository is code and data only).
 
 A minimal foraging swarm — Lévy exploration + a threshold recruitment cascade on the proximity graph +
 density-dependent dispersal — self-organizes to the ideal-free / Nash-equilibrium allocation of a multi-agent
@@ -155,11 +158,11 @@ developed in a companion paper (Part I).
 
 If you use this code, please cite the paper (preprint on arXiv):
 
-> Galen J. Wilkerson. *A learner-free swarm approximates the explore–exploit equilibrium allocation.* arXiv preprint arXiv:2610.25113, 2026.
+> Galen J. Wilkerson. *A learner-free swarm approximates the explore–exploit equilibrium allocation: A self-organized attractor in place of reinforcement-learning machinery.* arXiv preprint arXiv:2610.25113, 2026.
 
 ```bibtex
 @article{wilkerson2026learnerfree,
-  title         = {A learner-free swarm approximates the explore--exploit equilibrium allocation},
+  title         = {A learner-free swarm approximates the explore--exploit equilibrium allocation: A self-organized attractor in place of reinforcement-learning machinery},
   author        = {Wilkerson, Galen J.},
   year          = {2026},
   eprint        = {2610.25113},
