@@ -165,10 +165,13 @@ class MobileCascade:
         return torch.remainder(ctr + self._randn(self.B, self.K, 2) * self.clump_radius, self.size)
 
     def _levy_length(self):
-        """Heavy-tailed step LENGTH ~ |alpha-stable| (Mantegna), (B,N). Direction is applied
-        separately so the SAME length law is used for random (exploring) and cascade-directed
-        (recruited) motion -- recruitment then changes only the heading, never the step size, so it
-        cannot 'win' an efficiency comparison by making agents move less."""
+        """Heavy-tailed EXPLORATION step length ~ |alpha-stable| (Mantegna), (B,N), for inactive
+        (exploring) agents only; recruited agents instead take a short exploit_step (set in step()).
+        The length is capped at the arena side L: on a torus a single displacement beyond L is not
+        physically meaningful (it wraps), and for small alpha the bare heavy tail overflows float32,
+        producing inf distances and (via remainder) nan positions. The cap binds only in the
+        heavy-tail/small-alpha regime; for alpha>~1 the drawn length is far below L, so capped and
+        uncapped motion coincide (the validated alpha>=1 results are unaffected)."""
         a = max(0.3, min(1.99, float(self.levy_alpha)))
         num = (math.gamma(1 + a) * math.sin(math.pi * a / 2)) ** (1.0 / a)
         den = (math.gamma((1 + a) / 2) * a * 2 ** ((a - 1) / 2)) ** (1.0 / a)
@@ -176,7 +179,7 @@ class MobileCascade:
         u = self._randn(self.B, self.N) * sigma
         w = self._randn(self.B, self.N).abs()
         raw = (u / w.clamp(min=1e-12).pow(1.0 / a)).abs()
-        return raw * (self.step_scale / 10.0)
+        return (raw * (self.step_scale / 10.0)).clamp(max=float(self.cfg.L))
 
     def _rand_dir(self):
         """Uniform-angle unit vectors, (B,N,2). Isotropic -- unlike the old per-component alpha-stable
@@ -299,15 +302,15 @@ class MobileCascade:
                                           torch.full_like(self.source_cap, self.capacity),
                                           self.source_cap)
 
-        # --- motion: three mutually exclusive modes (Galen's decided semantics 2026-07-18) ---
+        # --- motion: three mutually exclusive modes (CORRECTED MODEL 2026-11-01) ---
         #   ON FOOD (seed)          -> area-restricted search: small isotropic Brownian step
-        #   RECRUITED, off food     -> Levy flight with heading SET BY THE CASCADE (toward parents,
-        #                              which lie transitively toward the seed) -- same length law as
-        #                              exploration, only the direction is informed
-        #   EXPLORING (inactive)    -> Levy flight in a RANDOM direction
-        # Recruitment thus changes the direction of search, never its step size, so the movement-cost
-        # comparison against a non-recruiting swarm is honest (the old code drifted recruited agents a
-        # tiny 'pull'-fraction toward one-hop recruiters, which read as a near-freeze).
+        #   RECRUITED, off food     -> SHORT step (ARS scale, ~exploit_step), direction toward the parent
+        #                              centroid iff converge; short, NOT Levy -- the switch-to-short-steps
+        #   EXPLORING (inactive)    -> full Levy flight in a RANDOM direction
+        # Recruitment switches the STEP SIZE (Levy exploration -> short local exploitation) with direction
+        # set by the cascade. This replaces the earlier directed-Levy recruited motion (which kept the Levy
+        # step length and only changed direction); the earlier pull-fraction drift ('near-freeze') is also
+        # retired. The Q3 ablation (converge=False) now toggles DIRECTION at fixed short step size.
         if self.levy_alpha is not None:
             length = self._levy_length()                         # (B,N) shared Levy length
             rdir = self._rand_dir()                              # (B,N,2) random headings
@@ -322,10 +325,13 @@ class MobileCascade:
             # coupling ablation: converge=False -> recruited agents get NO cascade heading (move
             # randomly like explorers), isolating the recruitment->motion coupling
             directed = (recruited & has_head) if self.converge else torch.zeros_like(recruited)
-            heading = torch.where(directed.unsqueeze(-1), cascade_dir, rdir)
-            levy_vec = heading * length.unsqueeze(-1)
-            brownian = self._randn(B, N, 2) * self.exploit_step  # isotropic ARS step on food
-            step_vec = torch.where(seed.unsqueeze(-1), brownian, levy_vec)
+            short_head = torch.where(directed.unsqueeze(-1), cascade_dir, rdir)   # recruited heading
+            short_step = short_head * self.exploit_step + self._randn(B, N, 2) * (self.exploit_step * 0.3)
+            levy_random = rdir * length.unsqueeze(-1)            # explorers: full Levy, random direction
+            brownian = self._randn(B, N, 2) * self.exploit_step  # seeds: isotropic ARS on food
+            # recruited (active, off food) ALWAYS take the SHORT step; explorers take Levy; seeds ARS
+            off_food = torch.where(recruited.unsqueeze(-1), short_step, levy_random)
+            step_vec = torch.where(seed.unsqueeze(-1), brownian, off_food)
         else:
             step_vec = self._randn(B, N, 2) * self.step_scale    # backward-compatible random walk
             directed = torch.zeros_like(recruited)

@@ -182,7 +182,7 @@ def make_figure(zs_win, win, peak_z, rows):
     a1.axvline(2.1, color="#d62728", ls=":", lw=1.2); a1.text(2.15, z.max()*0.9, "paper\n$\\rho_r$=2.1", color="#d62728", fontsize=8.5)
     a1.set_xlabel("connectivity  $\\rho_r$"); a1.set_ylabel("operating mean degree $z_{global}$")
     a1.set_yscale("log")
-    a1.set_title("(b) swarm AGGREGATES above the window\n(criticality is local, not bulk)", fontsize=10.2)
+    a1.set_title("(b) swarm aggregates above the window\n(criticality is local, not bulk)", fontsize=10.2)
     a1.legend(fontsize=8.5, loc="lower right")
     # (c) sigma (flat subcritical) + IFD slope vs connectivity
     a2 = ax[2]
@@ -197,9 +197,7 @@ def make_figure(zs_win, win, peak_z, rows):
     a2b.set_ylim(0, 1.15); a2b.tick_params(axis="y", labelcolor="#2ca02c")
     a2.set_title("(c) $\\sigma$ density-invariant & subcritical;\nmatching near-ideal (no tuning)", fontsize=10.2)
     a2.set_xscale("log")
-    fig.suptitle("The cascade window (a); the mobile swarm self-regulates to a stable subcritical "
-                 "operating regime across 60$\\times$ density (b,c)", fontsize=11)
-    fig.tight_layout(rect=(0, 0, 1, 0.94))
+    fig.tight_layout()
     for ext in ("pdf", "png"):
         p = os.path.join(HERE, f"fig_b1_selforg.{ext}")
         fig.savefig(p, dpi=200 if ext == "png" else None); print("wrote", p)
